@@ -43,6 +43,21 @@ Regenerate `src/lib/supabase/types.ts` after schema changes:
 pnpm dlx supabase gen types typescript --linked > src/lib/supabase/types.ts
 ```
 
+### Auth settings
+
+One Supabase setting is not captured in migrations — set it via the dashboard (Authentication → Providers → Email) or the Management API:
+
+```bash
+# Disable email confirmation (signups are auto-confirmed → immediate login).
+curl -X PATCH \
+  -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"mailer_autoconfirm": true}' \
+  https://api.supabase.com/v1/projects/<project-ref>/config/auth
+```
+
+Flip `mailer_autoconfirm` back to `false` whenever you want real email verification in production.
+
 ## Routes
 
 ### Public
