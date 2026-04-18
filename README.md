@@ -1,86 +1,92 @@
 # ThinksToDo — Astro + Supabase
 
-Astro 5/6 + React 19 islands frontend for ThinksToDo, replacing the Django demo at `../ListingHub_Django`.
+A business-listings site with authentication, listing CRUD, search, bookings, and reviews. Astro 6 SSR + Supabase (auth + Postgres + storage), deployed on Vercel.
 
-## Prerequisites
-
-- Node 22 LTS or newer (v23 also works; deploy on the current LTS).
-- pnpm (`npm install -g pnpm@latest`)
-
-## Install
+## Quick start
 
 ```bash
 pnpm install
+cp .env.example .env.local        # then fill in the three Supabase values
+pnpm dev                          # http://localhost:4321
 ```
 
-## Run the dev server
+## Environment variables
 
-```bash
-pnpm dev
-```
+Populate `.env.local` (gitignored) with values from Supabase → **Project Settings → API**:
 
-Serves at `http://localhost:4321/`. The Django reference app can keep running at `http://127.0.0.1:8000/` — different port, no conflict.
-
-## Supabase setup (one-time, when you're ready)
-
-The Astro app is pre-wired to talk to Supabase. It just needs three env values.
-
-1. Create a free Supabase project at <https://supabase.com/dashboard>.
-2. In the new project, go to **Settings → API**.
-3. Copy these three values:
-   - `Project URL` → paste into `PUBLIC_SUPABASE_URL` in `.env.local`
-   - `anon public` key → paste into `PUBLIC_SUPABASE_ANON_KEY`
-   - `service_role` key → paste into `SUPABASE_SERVICE_ROLE_KEY`
-4. Save `.env.local`. Restart `pnpm dev` once.
-
-That's all. Every page / island that talks to Supabase will start working. Before Plan 1 runs database migrations, the project has no tables — data-reading pages will render but show empty states.
-
-### What the three keys do
-
-| Key | Where it's used | Exposed to browser? |
+| Variable | Where it's used | Exposed to browser? |
 |---|---|---|
-| `PUBLIC_SUPABASE_URL` | Both `src/lib/supabase/server.ts` and `browser.ts` | Yes (safe) |
-| `PUBLIC_SUPABASE_ANON_KEY` | Both server and browser clients | Yes (safe — RLS protects data) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Only server-side (never in `src/components/*.tsx`) | **No — bypasses RLS. Keep it out of commits.** |
+| `PUBLIC_SUPABASE_URL` | Server + browser Supabase clients | Yes (safe) |
+| `PUBLIC_SUPABASE_ANON_KEY` | Server + browser | Yes — RLS policies protect data |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only (image upload, admin tasks) | **No — bypasses RLS. Never commit.** |
 
-`.env.local` is gitignored; `.env.example` (committed) is the template.
+The exact same three variables must be set in **Vercel → Project Settings → Environment Variables** for deployment.
 
-## Project layout
+## Database
 
-- `src/pages/` — file-based routes (one file per URL).
-- `src/layouts/Base.astro` — global `<head>` + nav + footer wrapper.
-- `src/components/nav/` — Navbar (9 Django variants collapsed into one) + Footer.
-- `src/components/<feature>/` — per-feature components, with `islands/` subfolders for React islands.
-- `src/lib/supabase/` — server + browser Supabase client factories; `types.ts` is regenerated from `supabase gen types` in Plan 1.
-- `public/assets/` — Bootstrap 5 theme CSS/JS/fonts/images copied verbatim from the Django project (206 files, ~18 MB).
+Schema, seed data, and storage bucket live in [`supabase/migrations/`](./supabase/migrations/):
 
-## Porting status
+- `0001_init.sql` — tables (profiles, listings, bookings, reviews, bookmarks, etc.) with RLS policies
+- `0002_seed.sql` — 10 categories + 10 amenities
+- `0003_storage.sql` — `listing-images` bucket + storage policies
 
-| Page / feature | Status |
-|---|---|
-| All 36 static pages | ✅ Plan 2 |
-| Navbar consolidation (9 variants → 1 component) | ✅ Plan 0 |
-| Shared components (Subscribe, LoginModal, Cart, Search, Preloader, DashboardSidebar) | ✅ Plan 2 |
-| Django context-processor data → `src/lib/data/context.ts` | ✅ Plan 2 |
-| Dynamic routes (`single-listing-04/[slug]`, `blog-detail/[slug]`) | ✅ Plan 2 |
-| Live Supabase data | ⏳ Plan 3 |
-| Real auth (Supabase Auth + CSRF) | ⏳ Plan 4 |
-| Dashboard CRUD (Supabase writes) | ⏳ Plan 5 |
-| Map tiles + live search filter (Leaflet island) | ⏳ Plan 3/6 |
-| Deploy (Vercel / Cloudflare) | ⏳ Plan 7 |
-
-See `../docs/superpowers/plans/2026-04-18-astro-supabase-migration-overview.md` for the full roadmap.
-
-## Running side-by-side with Django
-
-Keep both servers running during the port:
+Apply against a linked Supabase project:
 
 ```bash
-# Terminal 1 — Django (reference)
-cd ../ListingHub_Django && .venv/bin/python manage.py runserver   # :8000
-
-# Terminal 2 — Astro (in progress)
-cd ../thinkstodo-astro && pnpm dev                                 # :4321
+pnpm dlx supabase link --project-ref <your-ref>
+pnpm dlx supabase db push
 ```
 
-Visually diff pages by opening the Django and Astro URLs side by side. That's the only "test" that matters for template parity.
+Regenerate `src/lib/supabase/types.ts` after schema changes:
+
+```bash
+pnpm dlx supabase gen types typescript --linked > src/lib/supabase/types.ts
+```
+
+## Routes
+
+### Public
+- `/` — home with hero search and featured listings
+- `/listings/`, `/listings-grid/`, `/listings-map/` — three browse views
+- `/listing/<slug>/` — detail page with reviews + booking CTA
+- `/search?q=&category=&city=` — filtered search results
+- `/about-us/`, `/contact-us/`, `/faq/`, `/privacy-policy/`, `/help-center/`, `/blog/`
+
+### Auth
+- `/login/`, `/register/`, `/forgot-password/`, `/reset-password/`
+- `/api/auth/{signin,signup,signout,forgot-password,callback}` — form-POST endpoints
+
+### Dashboard (protected — middleware redirects to `/login/` when unauthed)
+- `/dashboard-user/`, `/dashboard-my-profile/`
+- `/dashboard-my-listings/`, `/dashboard-add-listing/`
+- `/dashboard-my-bookings/`, `/dashboard-bookmarks/`, `/dashboard-reviews/`
+
+### API
+- `POST /api/listings` — create listing (with image upload)
+- `POST /api/listings/[id]` — `_action=publish|unpublish|delete`
+- `POST /api/bookmarks/[listing_id]` — `_action=toggle|add|remove`
+- `POST /api/bookings` — create booking request
+- `POST /api/reviews` — upsert a review, recalculate listing rating
+
+## Deploy to Vercel
+
+1. Import this GitHub repo at <https://vercel.com/new>.
+2. Framework preset: **Astro** (auto-detected; uses `@astrojs/vercel`).
+3. Add the three env vars above in **Project Settings → Environment Variables** for Production + Preview + Development.
+4. First deploy runs automatically.
+
+## Architecture notes
+
+- `src/middleware.ts` hydrates the session on every SSR request and guards `/dashboard-*` and `/api/*` (except `/api/auth/*`).
+- Most pages are SSR (`export const prerender = false`). Purely static marketing pages stay prerendered for CDN caching.
+- The template's 3,000+ line `src/lib/data/context.ts` is now only used for cosmetic secondary data (categories3 sidebar, blog posts, etc.). All listing data comes from Supabase.
+- Image uploads use a service-role client to bypass RLS writes (ownership is validated at the API layer first).
+
+## Local tooling
+
+```bash
+pnpm dev            # dev server with HMR
+pnpm build          # production build → dist/ + .vercel/output/
+pnpm preview        # serve the build locally
+pnpm astro check    # typecheck .astro files
+```

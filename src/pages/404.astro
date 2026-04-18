@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import Footer from '../components/nav/Footer.astro';
+import Subscribe from '../components/shared/Subscribe.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+---
+<Base title="Page Not Found - ThinksToDo">
+  <Navbar headerClass="header header-light head-shadow" />
+
+  <Preloader />
+
+  <section class="py-5 text-center">
+    <div class="container py-5">
+      <img src="/assets/img/error.svg" class="img-fluid mb-4" width="360" alt="Not Found" />
+      <h1 class="display-4 fw-medium mb-3">Page not found</h1>
+      <p class="text-muted mb-4">The page you're looking for doesn't exist or has been moved.</p>
+      <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a href="/" class="btn btn-primary rounded-pill fw-medium"><i class="bi bi-house me-2"></i>Go Home</a>
+        <a href="/listings/" class="btn btn-light rounded-pill fw-medium"><i class="bi bi-search me-2"></i>Browse Listings</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-cover bg-primary-2 position-relative py-5" style="background:url(/assets/img/brand-section.png)no-repeat;">
+    <div class="container">
+      <Subscribe />
+    </div>
+  </section>
+
+  <Footer />
+  <LoginModal />
+  <SearchOffcanvas />
+</Base>
