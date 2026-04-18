@@ -6,8 +6,21 @@ import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
-import { manages } from '../lib/data/context';
+import { getListingsByOwner } from '../lib/supabase/listings';
 export const prerender = false;
+
+const user = Astro.locals.user!;
+const supabase = Astro.locals.supabase;
+const myListings = await getListingsByOwner(supabase, user.id);
+
+// Fetch current statuses in parallel so we know which are drafts vs published.
+const { data: statusRows } = supabase
+  ? await supabase.from('listings').select('id, status').eq('owner_id', user.id)
+  : { data: [] };
+const statusById = new Map((statusRows ?? []).map((r: any) => [r.id, r.status]));
+
+const error = Astro.url.searchParams.get('error');
+const notice = Astro.url.searchParams.get('notice');
 ---
 <Base title="My Listings - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />
@@ -29,75 +42,86 @@ export const prerender = false;
           <div class="user-dashboard-box bg-light">
 
             <!-- Dashboard Title -->
-            <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
+            <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0 d-flex align-items-center justify-content-between flex-wrap gap-3">
               <h2 class="fw-medium mb-0">My Listings</h2>
+              <a href="/dashboard-add-listing/" class="btn btn-primary rounded-pill fw-medium"><i class="bi bi-plus-circle me-1"></i>Add Listing</a>
             </div>
 
             <!-- Dashboard Details -->
             <div class="dashCaption p-xl-5 p-3 p-md-4">
 
-              <!-- Row Start -->
+              {error && (
+                <div class="alert alert-danger">{error}</div>
+              )}
+              {notice && (
+                <div class="alert alert-success">{notice}</div>
+              )}
+
               <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
+                <div class="col-12">
                   <div class="card rounded-3 shadow-sm">
                     <div class="card-header px-4 py-3">
-                      <h4 class="m-0">Manage Listings</h4>
+                      <h4 class="m-0">Manage Listings <span class="text-muted fs-6">({myListings.length})</span></h4>
                     </div>
                     <div class="card-body p-0">
-                      <ul class="dashboardListgroup">
-
-                        <!-- Components/User-Dashboard/dashboard-my-listings/manage.html -->
-                        {manages.map((item: any) => (
-                          <li>
-                            <div class="mngListings">
-                              <div class="d-flex align-items-center justify-content-start gap-3 flex-wrap">
-                                <div class="mngListinfirst">
+                      {myListings.length === 0 ? (
+                        <div class="p-4 text-center">
+                          <p class="text-muted mb-3">You haven't created any listings yet.</p>
+                          <a href="/dashboard-add-listing/" class="btn btn-primary rounded-pill fw-medium">Create your first listing</a>
+                        </div>
+                      ) : (
+                        <ul class="dashboardListgroup">
+                          {myListings.map((item) => {
+                            const status = statusById.get(item.id) ?? 'draft';
+                            return (
+                              <li>
+                                <div class="mngListings">
                                   <div class="d-flex align-items-center justify-content-start gap-3 flex-wrap">
-                                    <div class="mngListings-thumb">
-                                      <figure class="m-0"><img src={item.img} class="img-fluid rounded" alt="Avatar" /></figure>
+                                    <div class="mngListinfirst">
+                                      <div class="d-flex align-items-center justify-content-start gap-3 flex-wrap">
+                                        <div class="mngListings-thumb">
+                                          <figure class="m-0"><img src={item.img} class="img-fluid rounded" alt={item.title} /></figure>
+                                        </div>
+                                        <div class="mngListings-caps">
+                                          <div class="d-flex align-items-center justify-content-start mb-1 gap-2">
+                                            {status === 'draft' && <span class="badge badge-xs bg-warning">Draft</span>}
+                                            {status === 'published' && <span class="badge badge-xs bg-success">Published</span>}
+                                            {status === 'archived' && <span class="badge badge-xs bg-secondary">Archived</span>}
+                                          </div>
+                                          <h5 class="mnglstTitle"><a href={`/listing/${item.slug}/`}>{item.title}</a></h5>
+                                          <span>{item.desc.slice(0, 140)}{item.desc.length > 140 ? '…' : ''}</span>
+                                          <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
+                                            <div class="text-md text-muted">{item.city || 'No location'} · {item.reviews}</div>
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div>
-
-                                    <div class="mngListings-caps">
-
-                                      {item.tag === 'true' && (
-                                        <div class="d-flex align-items-center justify-content-start mb-1">
-                                          <span class="badge badge-xs bg-danger">Expired</span>
-                                        </div>
-                                      )}
-
-                                      <h5 class="mnglstTitle">{item.title}</h5>
-                                      <span>{item.desc}</span>
-                                      <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
-                                        <div class="ratingView" data-rating="5.0">
-                                          <i class="bi bi-star-fill"></i>
-                                          <i class="bi bi-star-fill"></i>
-                                          <i class="bi bi-star-fill"></i>
-                                          <i class="bi bi-star-fill"></i>
-                                          <i class="bi bi-star-half"></i>
-                                        </div>
-                                        <div class="text-md">{item.reviews}</div>
+                                    <div class="mngListinlast">
+                                      <div class="d-flex align-items-center justify-content-start gap-2 flex-wrap">
+                                        <a href={`/listing/${item.slug}/`} class="btn btn-sm btn-light rounded-pill"><i class="bi bi-eye me-1"></i>View</a>
+                                        <form action={`/api/listings/${item.id}`} method="post" style="display:inline;">
+                                          <input type="hidden" name="_action" value={status === 'published' ? 'unpublish' : 'publish'} />
+                                          <button type="submit" class="btn btn-sm btn-light-success fw-medium rounded-pill">
+                                            <i class="bi bi-check2-circle me-1"></i>{status === 'published' ? 'Unpublish' : 'Publish'}
+                                          </button>
+                                        </form>
+                                        <form action={`/api/listings/${item.id}`} method="post" style="display:inline;" onsubmit="return confirm('Delete this listing permanently?')">
+                                          <input type="hidden" name="_action" value="delete" />
+                                          <button type="submit" class="btn btn-sm btn-light-danger fw-medium rounded-pill"><i class="bi bi-x me-1"></i>Delete</button>
+                                        </form>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
-                                <div class="mngListinlast">
-                                  <div class="d-flex align-items-center justify-content-start gap-3">
-                                    <a href="#" class="btn btn-sm btn-light-success fw-medium rounded-pill"><i class="bi bi-check2-circle me-1"></i>{item.btn}</a>
-                                    <a href="#" class="btn btn-sm btn-light-danger fw-medium rounded-pill"><i class="bi bi-x me-1"></i>Delete</a>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-                        ))}
-
-                      </ul>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
                     </div>
                   </div>
                 </div>
-
               </div>
-              <!-- Row End -->
 
               <!-- Row Start -->
               <div class="row align-items-start g-4">

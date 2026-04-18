@@ -5,11 +5,11 @@ import Footer from '../components/nav/Footer.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
-import { slistings, listings7 } from '../lib/data/context';
+import { slistings } from '../lib/data/context';
+import { getPublishedListings, slugify } from '../lib/supabase/listings';
+export const prerender = false;
 
-function slugify(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
+const listings7 = await getPublishedListings(Astro.locals.supabase);
 ---
 <Base title="Half Map Screen - ThinksToDo">
   <Navbar headerClass="header header-transparent navdark" logo="/assets/img/logo-light.svg" />

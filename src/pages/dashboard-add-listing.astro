@@ -6,367 +6,224 @@ import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
-import { gallerys5, timings, features2 } from '../lib/data/context';
 
-const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 export const prerender = false;
+
+const supabase = Astro.locals.supabase;
+const error = Astro.url.searchParams.get('error');
+const notice = Astro.url.searchParams.get('notice');
+
+// Load categories and amenities from DB for the selects / checkboxes.
+const { data: categories } = (await supabase?.from('categories').select('id, slug, name').order('sort_order')) ?? { data: [] };
+const { data: amenityRows } = (await supabase?.from('amenities').select('id, key, name, icon').order('name')) ?? { data: [] };
 ---
 <Base title="Add Listing - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />
 
   <Preloader />
 
-  <!-- Dashboard Start -->
   <section class="p-0">
     <div class="container-fluid p-0">
       <div class="row user-dashboard g-0 pt-lg-0 pt-5">
 
-        <!-- Dashboard Sidebar -->
         <div class="col-xl-2 col-lg-3 col-md-12">
           <DashboardSidebar current="add-listing" />
         </div>
 
-        <!-- Dashboard Content -->
         <div class="col-xl-10 col-lg-9 col-md-12">
           <div class="user-dashboard-box bg-light">
 
-            <!-- Dashboard Title -->
             <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
-              <h2 class="fw-medium mb-0">Add Listing</h2>
+              <h2 class="fw-medium mb-0">Add a Listing</h2>
+              <p class="text-muted mt-2 mb-0">Fill in the details below. Your listing starts as a draft — publish it from the My Listings page when ready.</p>
             </div>
 
-            <!-- Dashboard Details -->
             <div class="dashCaption p-xl-5 p-3 p-md-4">
 
-              <!-- Row Start -->
-              <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
-                  <div class="card rounded-3 shadow-sm">
-                    <div class="card-header py-4 px-4">
-                      <h4 class="fs-5 fw-medium"><i class="fa fa-file text-primary me-2"></i>Basic Informations</h4>
-                    </div>
-                    <div class="card-body">
+              {error && (
+                <div class="alert alert-danger" role="alert">{error}</div>
+              )}
+              {notice && (
+                <div class="alert alert-success" role="alert">{notice}</div>
+              )}
 
-                      <!-- Components/User-Dashboard/dashboard-add-listing/informations.html -->
-                      <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">Listing Tile<i class="lableTip bi bi-patch-question-fill" data-bs-toggle="tooltip" data-bs-title="Name of your business"></i></label>
-                            <input type="text" class="form-control rounded" placeholder="Decathlon Sport House" />
-                          </div>
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">Category</label>
-                            <div class="selects">
-                              <select class="categories form-control">
-                                <option label="option"></option>
-                                <option value="lv">Eat & Drinking</option>
-                                <option value="la">Rental Property</option>
-                                <option value="kc">Classifieds</option>
-                                <option value="no">Bank Services</option>
-                                <option value="kc">Shopping</option>
-                                <option value="lb">Fintess & Gym</option>
-                                <option value="cl">Coaching</option>
-                                <option value="cn">Other Services</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">Keywords<i class="lableTip bi bi-patch-question-fill" data-bs-toggle="tooltip" data-bs-title="Maximum 10 keywords related with business"></i></label>
-                            <input type="text" class="form-control rounded" placeholder="Type keywords by comma's" />
-                          </div>
-                        </div>
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">About Liting</label>
-                            <textarea class="form-control rounded ht-150" placeholder="Describe your self"></textarea>
-                          </div>
-                        </div>
+              <form action="/api/listings" method="post" enctype="multipart/form-data">
+
+                <!-- Basic info -->
+                <div class="row align-items-start g-4 mb-lg-5 mb-4">
+                  <div class="col-12">
+                    <div class="card rounded-3 shadow-sm">
+                      <div class="card-header py-4 px-4">
+                        <h4 class="fs-5 fw-medium"><i class="fa fa-file text-primary me-2"></i>Basic Information</h4>
                       </div>
-
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-              <!-- Row End -->
-
-              <!-- Row Start -->
-              <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
-                  <div class="card rounded-3 shadow-sm">
-                    <div class="card-header py-4 px-4">
-                      <h4 class="fs-5 fw-medium"><i class="bi bi-geo-alt text-primary me-2"></i>Add Location</h4>
-                    </div>
-                    <div class="card-body">
-
-                      <!-- Components/User-Dashboard/dashboard-add-listing/location.html -->
-                      <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">Address</label>
-                            <input type="text" class="form-control rounded" placeholder="202 Near houset market" />
-                          </div>
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">City</label>
-                            <div class="selects">
-                              <select class="location form-control">
-                                <option label="option"></option>
-                                <option value="lv">Philadelphia</option>
-                                <option value="la">Nashville</option>
-                                <option value="kc">San Francisco</option>
-                                <option value="no">San Antonio</option>
-                                <option value="kc">Las Vegas</option>
-                                <option value="lb">Los Angeles</option>
-                                <option value="cl">Kansas City</option>
-                                <option value="cn">Jacksonville</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">State</label>
-                            <input type="text" class="form-control rounded" placeholder="" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">Postal Code</label>
-                            <input type="text" class="form-control rounded" placeholder="" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">Zip-Code</label>
-                            <input type="text" class="form-control rounded" placeholder="" />
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-              <!-- Row End -->
-
-              <!-- Row Start -->
-              <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
-                  <div class="card rounded-3 shadow-sm">
-                    <div class="card-header py-4 px-4">
-                      <h4 class="fs-5 fw-medium"><i class="bi bi-images text-primary me-2"></i>Logo & Gallery</h4>
-                    </div>
-                    <div class="card-body">
-                      <div class="row g-4">
-
-                        <!-- Components/User-Dashboard/dashboard-add-listing/logo&gallery.html -->
-                        {gallerys5.map((item: any) => (
-                          <div class="col-lg-4 col-md-6">
-                            <label class="lableTitle">{item.title}</label>
-                            <form action="/file-upload" class="dropzone" id={item.id}>
-                              <i class="bi bi-patch-plus"></i>
-                            </form>
-                            <label class="smart-text text-md">{item.name}</label>
-                          </div>
-                        ))}
-
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-              <!-- Row End -->
-
-
-              <!-- Row Start -->
-              <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
-                  <div class="card rounded-3 shadow-sm">
-                    <div class="card-header py-4 px-4">
-                      <h4 class="fs-5 fw-medium"><i class="bi bi-stopwatch text-primary me-2"></i>Working Hours</h4>
-                    </div>
-                    <div class="card-body">
+                      <div class="card-body">
                         <div class="row">
-
-                        <!-- Components/User-Dashboard/dashboard-add-listing/working-hours.html -->
-                        {days.map((day) => (
-                          <div class="form-group">
-                            <div class="row align-items-center g-3">
-                              <label class="lableTitle col-lg-2 col-md-2">{day}</label>
-                              <div class="col-lg-5 col-md-5">
-                                <select class="openingtime chosen-select">
-                                  <option label="option"></option>
-
-                                  <!-- Components/User-Dashboard/dashboard-add-listing/timing.html -->
-                                  {timings.map((t: any) => (
-                                    <option>{t.time}</option>
-                                  ))}
-
-                                </select>
-                              </div>
-                              <div class="col-lg-5 col-md-5">
-                                <select class="closingtime chosen-select">
-                                  <option label="option"></option>
-
-                                  <!-- Components/User-Dashboard/dashboard-add-listing/timing.html -->
-                                  {timings.map((t: any) => (
-                                    <option>{t.time}</option>
-                                  ))}
-
-                                </select>
-                              </div>
+                          <div class="col-12">
+                            <div class="form-group">
+                              <label class="lableTitle">Title <span class="text-danger">*</span></label>
+                              <input type="text" name="title" required maxlength="140" class="form-control rounded" placeholder="e.g. The Big Bumble Gym" />
                             </div>
                           </div>
-                        ))}
-
-                        <div class="form-check mt-4 ps-5">
-                          <input id="t24" class="form-check-input" name="24-1" type="checkbox" />
-                          <label for="t24" class="form-check-label text-dark">This Business open 7x24</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-              <!-- Row End -->
-
-
-              <!-- Row Start -->
-              <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
-                  <div class="card rounded-3 shadow-sm">
-                    <div class="card-header py-4 px-4">
-                      <h4 class="fs-5 fw-medium"><i class="bi bi-feather text-primary me-2"></i>Features</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="amenitiesFeatures">
-                        <ul class="p-0 row align-items-start justify-content-start g-4">
-
-                          <!-- Components/User-Dashboard/dashboard-add-listing/features2.html -->
-                          {features2.map((item: any) => (
-                            <li class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
-                              <div class="form-check">
-                                <input id={item.id} class="form-check-input" name={item.id} type="checkbox" />
-                                <label for={item.id} class="form-check-label">{item.title}</label>
-                              </div>
-                            </li>
-                          ))}
-
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-              <!-- Row End -->
-
-
-              <!-- Row Start -->
-              <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
-                  <div class="card rounded-3 shadow-sm">
-                    <div class="card-header py-4 px-4">
-                      <h4 class="fs-5 fw-medium"><i class="bi bi-tags text-primary me-2"></i>Add Menues</h4>
-                    </div>
-                    <div class="card-body">
-
-                      <!-- Components/User-Dashboard/dashboard-add-listing/menues.html -->
-                      <div class="row">
-
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">Choose Category<i class="lableTip bi bi-patch-question-fill" data-bs-toggle="tooltip" data-bs-title="Choose your Item Category"></i></label>
-                            <div class="selects">
-                              <select class="categories form-control">
-                                <option label="option"></option>
-                                <option value="lv">Chinees Food</option>
-                                <option value="la">Indian Food</option>
-                                <option value="kc">Breakfast</option>
-                                <option value="no">South Indian Food</option>
-                                <option value="kc">Fast Food</option>
-                                <option value="lb">Noodles</option>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="lableTitle">Category <span class="text-danger">*</span></label>
+                              <select name="category_slug" required class="form-control">
+                                <option value="">Choose a category…</option>
+                                {(categories ?? []).map((c: any) => (
+                                  <option value={c.slug}>{c.name}</option>
+                                ))}
                               </select>
                             </div>
                           </div>
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">Item Name</label>
-                            <input type="text" class="form-control rounded" placeholder="Item Name" />
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="lableTitle">Phone</label>
+                              <input type="tel" name="phone" class="form-control rounded" placeholder="+1 555 555 0100" />
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="lableTitle">Price tier</label>
+                              <select name="price_tier" class="form-control">
+                                <option value="1">$ — Inexpensive</option>
+                                <option value="2" selected>$$ — Moderate</option>
+                                <option value="3">$$$ — Pricey</option>
+                                <option value="4">$$$$ — Premium</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="lableTitle">Status</label>
+                              <select name="status" class="form-control">
+                                <option value="draft" selected>Draft (only visible to you)</option>
+                                <option value="published">Published</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-12">
+                            <div class="form-group">
+                              <label class="lableTitle">Description</label>
+                              <textarea name="description" rows="5" class="form-control rounded" placeholder="What makes this place special?"></textarea>
+                            </div>
                           </div>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                          <div class="form-group">
-                            <label class="lableTitle">Item Price in USD</label>
-                            <input type="text" class="form-control rounded" placeholder="Price" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                          <div class="d-flex align-items-center justify-content-between gap-3">
-                            <div class="addItem"><button type="button" class="btn btn-sm btn-light-primary fw-medium rounded-pill"><i class="bi bi-plus-circle me-1"></i>Add Item</button></div>
-                            <div class="removeItem"><button type="button" class="btn btn-sm btn-light fw-medium rounded-pill"><i class="bi bi-x-circle me-1"></i>Remove Item</button></div>
-                          </div>
-                        </div>
-
                       </div>
-
                     </div>
                   </div>
                 </div>
 
-              </div>
-              <!-- Row End -->
-
-              <!-- Row Start -->
-              <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
-                  <button type="button" class="btn btn-primary rounded-pill fw-medium">Publish & Preview<i class="bi bi-arrow-right-circle ms-2"></i></button>
+                <!-- Location -->
+                <div class="row align-items-start g-4 mb-lg-5 mb-4">
+                  <div class="col-12">
+                    <div class="card rounded-3 shadow-sm">
+                      <div class="card-header py-4 px-4">
+                        <h4 class="fs-5 fw-medium"><i class="bi bi-geo-alt text-primary me-2"></i>Location</h4>
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-12">
+                            <div class="form-group">
+                              <label class="lableTitle">Street address</label>
+                              <input type="text" name="address" class="form-control rounded" placeholder="202 Market Street" />
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="lableTitle">City</label>
+                              <input type="text" name="city" class="form-control rounded" placeholder="Los Angeles" />
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="lableTitle">Country</label>
+                              <input type="text" name="country" class="form-control rounded" placeholder="United States" />
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="lableTitle">Latitude</label>
+                              <input type="number" step="0.0000001" name="lat" class="form-control rounded" />
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="lableTitle">Longitude</label>
+                              <input type="number" step="0.0000001" name="lng" class="form-control rounded" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-              </div>
-              <!-- Row End -->
+                <!-- Images -->
+                <div class="row align-items-start g-4 mb-lg-5 mb-4">
+                  <div class="col-12">
+                    <div class="card rounded-3 shadow-sm">
+                      <div class="card-header py-4 px-4">
+                        <h4 class="fs-5 fw-medium"><i class="bi bi-images text-primary me-2"></i>Photos</h4>
+                        <p class="text-muted text-md mb-0 mt-1">The first image becomes the hero. Up to 5 JPEG/PNG/WebP, 5 MB each.</p>
+                      </div>
+                      <div class="card-body">
+                        <div class="form-group">
+                          <input type="file" name="images" multiple accept="image/jpeg,image/png,image/webp,image/gif" class="form-control" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-              <!-- Row Start -->
+                <!-- Amenities -->
+                {(amenityRows ?? []).length > 0 && (
+                  <div class="row align-items-start g-4 mb-lg-5 mb-4">
+                    <div class="col-12">
+                      <div class="card rounded-3 shadow-sm">
+                        <div class="card-header py-4 px-4">
+                          <h4 class="fs-5 fw-medium"><i class="bi bi-feather text-primary me-2"></i>Amenities</h4>
+                        </div>
+                        <div class="card-body">
+                          <ul class="p-0 row align-items-start justify-content-start g-4 list-unstyled mb-0">
+                            {(amenityRows ?? []).map((a: any) => (
+                              <li class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+                                <div class="form-check">
+                                  <input id={`amn-${a.id}`} class="form-check-input" name="amenities" value={a.id} type="checkbox" />
+                                  <label for={`amn-${a.id}`} class="form-check-label">{a.icon && <i class={`fa-solid ${a.icon} me-2 text-primary`}></i>}{a.name}</label>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div class="row align-items-start g-4 mb-lg-5 mb-4">
+                  <div class="col-12 d-flex gap-3">
+                    <button type="submit" class="btn btn-primary rounded-pill fw-medium">Save Listing<i class="bi bi-arrow-right-circle ms-2"></i></button>
+                    <a href="/dashboard-my-listings/" class="btn btn-light rounded-pill fw-medium">Cancel</a>
+                  </div>
+                </div>
+
+              </form>
+
               <div class="row align-items-start g-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
-                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo. Develop with <i class="mdi mdi-heart text-danger"></i> by <a href="https://shreethemes.in" target="_blank" class="text-reset">Shreethemes</a>.</p>
+                <div class="col-12">
+                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo.</p>
                 </div>
               </div>
 
             </div>
-
           </div>
         </div>
 
       </div>
     </div>
   </section>
-  <!-- Dashboard End -->
-
-
-  <!-- Components/Home/index/cart.html -->
-  <!-- Components/Home/index/search.html -->
-  <SearchOffcanvas />
-
-
-  <!-- Components/Home/index/log.html -->
-  <LoginModal />
-
 
   <Footer />
+  <LoginModal />
+  <SearchOffcanvas />
 </Base>
-</content>
-</invoke>

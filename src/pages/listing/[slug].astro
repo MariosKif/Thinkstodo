@@ -6,27 +6,22 @@ import Subscribe from '../../components/shared/Subscribe.astro';
 import LoginModal from '../../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../../components/shared/SearchOffcanvas.astro';
 import Preloader from '../../components/shared/Preloader.astro';
-import { features, gallerys3, authors, listings2 } from '../../lib/data/context';
+import { features, gallerys3, authors } from '../../lib/data/context';
+import { getListingBySlug, getPublishedListings, slugify } from '../../lib/supabase/listings';
+export const prerender = false;
 
-function slugify(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const { slug } = Astro.params as { slug: string };
+const result = await getListingBySlug(Astro.locals.supabase, slug);
+if (!result) {
+  return new Response('Listing not found', { status: 404 });
 }
-
-export async function getStaticPaths() {
-  // Phase 0 bridge: drive detail pages from the same `listings` array the browse pages use,
-  // so clicking any listing card lands on a working detail page. Phase 3 replaces this with
-  // a Supabase fetch and switches to SSR (prerender = false).
-  const { listings } = await import('../../lib/data/context');
-  const slugifyFn = (s: string) =>
-    s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  return listings.map((listing) => ({
-    params: { slug: (listing as any).slug || slugifyFn((listing as any).title) },
-    props: { event: listing },
-  }));
-}
-
-const { event } = Astro.props as { event: any };
+const event = result.card;
+const detail = result.raw;
 const heroImg = event.img || '/assets/img/single-4.jpg';
+
+// Similar listings — pull 4 most recent published ones excluding this one.
+const similar = (await getPublishedListings(Astro.locals.supabase, { limit: 4 })).filter((l) => l.id !== event.id);
+const listings2 = similar;
 ---
 <Base title="Single Listing - ThinksToDo">
   <Navbar headerClass="header header-light" />
@@ -505,7 +500,15 @@ const heroImg = event.img || '/assets/img/single-4.jpg';
 
 							<div class="card-body px-3">
 								<div class="form-group mb-1">
-									<button type="button" class="btn btn-whites border rounded-pill fw-medium w-100"><i class="bi bi-suit-heart me-2"></i>Bookmark This Listing</button>
+									{Astro.locals.user ? (
+											<form action={`/api/bookmarks/${event.id}`} method="post">
+												<input type="hidden" name="_action" value="toggle" />
+												<input type="hidden" name="return_to" value={`/listing/${event.slug}/`} />
+												<button type="submit" class="btn btn-whites border rounded-pill fw-medium w-100"><i class="bi bi-suit-heart me-2"></i>Bookmark This Listing</button>
+											</form>
+										) : (
+											<a href={`/login/?next=${encodeURIComponent(`/listing/${event.slug}/`)}`} class="btn btn-whites border rounded-pill fw-medium w-100"><i class="bi bi-suit-heart me-2"></i>Sign in to Bookmark</a>
+										)}
 								</div>
 								<div class="form-group text-center mb-4">
 									<p class="text-md">45 People Bookmark This Place</p>

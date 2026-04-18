@@ -6,9 +6,11 @@ import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
-import { listings, slistings, categories3, amenities } from '../lib/data/context';
+import { slistings, categories3, amenities } from '../lib/data/context';
+import { getPublishedListings, slugify } from '../lib/supabase/listings';
+export const prerender = false;
 
-const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+const listings = await getPublishedListings(Astro.locals.supabase);
 ---
 <Base title="Grid Layout - ThinksToDo">
   <Navbar headerClass="header header-light" />

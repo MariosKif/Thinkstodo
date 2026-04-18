@@ -6,9 +6,13 @@ import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
-import { brands, categories, listings3, cities, reviews, blogs } from '../lib/data/context';
+import { brands, categories, cities, reviews, blogs } from '../lib/data/context';
+import { getPublishedListings, slugify } from '../lib/supabase/listings';
+export const prerender = false;
 
-const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+// Show the 8 most recent / featured listings on the home page. Falls back to an empty array
+// if Supabase isn't reachable — the rest of the page still renders.
+const listings3 = await getPublishedListings(Astro.locals.supabase, { limit: 8 });
 ---
 <Base title="ThinksToDo - Business Directory & Listing Template">
   <Navbar headerClass="header header-transparent dark navdark" logo="/assets/img/logo-light.svg" addListingLight={true} />

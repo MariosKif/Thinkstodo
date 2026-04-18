@@ -6,8 +6,11 @@ import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
-import { saveds } from '../lib/data/context';
+import { getBookmarkedListings } from '../lib/supabase/listings';
 export const prerender = false;
+
+const user = Astro.locals.user!;
+const saveds = await getBookmarkedListings(Astro.locals.supabase, user.id);
 ---
 <Base title="Bookmarks - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />
@@ -44,46 +47,47 @@ export const prerender = false;
                       <h4 class="m-0">Saved Listings</h4>
                     </div>
                     <div class="card-body p-0">
-                      <ul class="dashboardListgroup">
-
-                        <!-- Components/User-Dashboard/dashboard-bookmarks/saved.html -->
-                        {saveds.map((item: any) => (
-                          <li>
-                            <div class="mngListings">
-                              <div class="d-flex align-items-center justify-content-start gap-3 flex-wrap">
-                                <div class="mngListinfirst">
-                                  <div class="d-flex align-items-center justify-content-start gap-3 flex-wrap">
-                                    <div class="mngListings-thumb">
-                                      <figure class="m-0"><img src={item.img} class="img-fluid rounded" alt="Avatar" /></figure>
-                                    </div>
-
-                                    <div class="mngListings-caps">
-                                      <h5 class="mnglstTitle">{item.title}</h5>
-                                      <span>{item.desc}</span>
-                                      <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
-                                        <div class="ratingView" data-rating="5.0">
-                                          <i class="bi bi-star-fill"></i>
-                                          <i class="bi bi-star-fill"></i>
-                                          <i class="bi bi-star-fill"></i>
-                                          <i class="bi bi-star-fill"></i>
-                                          <i class="bi bi-star-half"></i>
+                      {saveds.length === 0 ? (
+                        <div class="p-4 text-center">
+                          <p class="text-muted mb-3">You haven't bookmarked any listings yet.</p>
+                          <a href="/listings/" class="btn btn-primary rounded-pill fw-medium">Browse Listings</a>
+                        </div>
+                      ) : (
+                        <ul class="dashboardListgroup">
+                          {saveds.map((item) => (
+                            <li>
+                              <div class="mngListings">
+                                <div class="d-flex align-items-center justify-content-start gap-3 flex-wrap">
+                                  <div class="mngListinfirst">
+                                    <div class="d-flex align-items-center justify-content-start gap-3 flex-wrap">
+                                      <div class="mngListings-thumb">
+                                        <figure class="m-0"><img src={item.img} class="img-fluid rounded" alt={item.title} /></figure>
+                                      </div>
+                                      <div class="mngListings-caps">
+                                        <h5 class="mnglstTitle"><a href={`/listing/${item.slug}/`}>{item.title}</a></h5>
+                                        <span>{item.desc.slice(0, 140)}{item.desc.length > 140 ? '…' : ''}</span>
+                                        <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
+                                          <div class="text-md text-muted">{item.city || 'No location'} · {item.reviews}</div>
                                         </div>
-                                        <div class="text-md">{item.reviews}</div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                                <div class="mngListinlast">
-                                  <div class="d-flex align-items-center justify-content-start gap-3">
-                                    <a href="#" class="btn btn-sm btn-light-danger fw-medium rounded-pill"><i class="bi bi-x me-1"></i>Remove</a>
+                                  <div class="mngListinlast">
+                                    <div class="d-flex align-items-center justify-content-start gap-3">
+                                      <a href={`/listing/${item.slug}/`} class="btn btn-sm btn-light rounded-pill"><i class="bi bi-eye me-1"></i>View</a>
+                                      <form action={`/api/bookmarks/${item.id}`} method="post" style="display:inline;">
+                                        <input type="hidden" name="_action" value="remove" />
+                                        <input type="hidden" name="return_to" value="/dashboard-bookmarks/" />
+                                        <button type="submit" class="btn btn-sm btn-light-danger fw-medium rounded-pill"><i class="bi bi-x me-1"></i>Remove</button>
+                                      </form>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          </li>
-                        ))}
-
-                      </ul>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </div>
                 </div>
