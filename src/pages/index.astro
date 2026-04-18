@@ -39,7 +39,7 @@ const listings3 = await getPublishedListings(Astro.locals.supabase, { limit: 8 }
 		<!-- Search Form row -->
 		<div class="row align-items-start justify-content-center">
 			<div class="col-xl-11 col-lg-12 col-md-12 col-sm-12">
-				<form class="heroSearch style-02" action="/listings-map/" method="get">
+				<form class="heroSearch style-02" action="/search" method="get">
 					<div class="row gx-lg-2 gx-md-2 gx-3 gy-sm-2 gy-2">
 						<div class="col-xl-4 col-lg-3 col-md-12 col-sm-12">
 							<div class="form-group position-relative">
@@ -48,7 +48,7 @@ const listings3 = await getPublishedListings(Astro.locals.supabase, { limit: 8 }
 						</div>
 						<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
 							<div class="form-group position-relative">
-								<input type="text" name="location" class="form-control fs-6 fw-medium" placeholder="Location">
+								<input type="text" name="city" class="form-control fs-6 fw-medium" placeholder="City">
 								<span class="position-absolute top-50 end-0 translate-middle me-2"><i class="fa-solid fa-location-dot text-muted opacity-50 fs-5"></i></span>
 							</div>
 						</div>
@@ -56,15 +56,15 @@ const listings3 = await getPublishedListings(Astro.locals.supabase, { limit: 8 }
 							<div class="form-group fw-medium lights-bg">
 								<div class="selects">
 									<select name="category" class="categories form-control">
-										<option label="option"></option>
-										<option value="lv">Eat & Drinking</option>
-										<option value="la">Rental Property</option>
-										<option value="kc">Classifieds</option>
-										<option value="no">Bank Services</option>
-										<option value="sh">Shopping</option>
-										<option value="lb">Fintess & Gym</option>
-										<option value="cl">Coaching</option>
-										<option value="cn">Other Services</option>
+										<option value="">All categories</option>
+										<option value="restaurant">Eat & Drinking</option>
+										<option value="real-estate">Real Estate</option>
+										<option value="shopping">Shopping</option>
+										<option value="fitness">Fitness & Gym</option>
+										<option value="education">Education</option>
+										<option value="automotive">Automotive</option>
+										<option value="entertainment">Entertainment</option>
+										<option value="spa">Spa & Wellness</option>
 									</select>
 								</div>
 							</div>

@@ -38,7 +38,7 @@ const listings7 = await getPublishedListings(Astro.locals.supabase);
 			<div class="filterOption-02 mb-3">
 
 				<!-- Components/Listings/Half-Map-Screen/half-map-01/single-filter.html -->
-				<form action="/listings-map/" method="get" class="row align-items-start justify-content-center g-3">
+				<form action="/search" method="get" class="row align-items-start justify-content-center g-3">
 				    <div class="col-xl-5 col-lg-5 col-md-5">
 				        <div class="form-group position-relative mb-0">
 				            <input type="search" name="q" class="form-control fw-medium ps-5" placeholder="What you are looking for?">
@@ -47,7 +47,7 @@ const listings7 = await getPublishedListings(Astro.locals.supabase);
 				    </div>
 				    <div class="col-xl-5 col-lg-5 col-md-5">
 				        <div class="form-group position-relative mb-0">
-				            <input type="search" name="location" class="form-control fw-medium ps-5" placeholder="Type location">
+				            <input type="search" name="city" class="form-control fw-medium ps-5" placeholder="City">
 				            <span class="position-absolute top-50 start-0 translate-middle text-muted ms-4"><i class="bi bi-crosshair2 opacity-75"></i></span>
 				        </div>
 				    </div>
