@@ -192,8 +192,11 @@ const markersPayload = mappable.map((l) => ({
           '<div class="lm-popup-meta">' + escapeHtml(l.category || '') + ' · ' + escapeHtml(l.price || '') + '</div>',
           '<div class="lm-popup-meta">★ ' + escapeHtml(l.rating || '') + ' · ' + escapeHtml(l.reviews || '') + '</div>',
         ].join('');
-        marker.bindPopup(popupHtml);
-        marker.on('click', function () { highlightCard(l.id); });
+        marker.bindPopup(popupHtml, { autoPan: false });
+        marker.on('click', function () {
+          map.setView(marker.getLatLng(), Math.max(map.getZoom(), 14), { animate: true });
+          highlightCard(l.id);
+        });
         markers[l.id] = marker;
         bounds.push([l.lat, l.lng]);
       });
