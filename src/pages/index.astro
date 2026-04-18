@@ -6,7 +6,7 @@ import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
-import { brands, categories, cities, reviews, blogs } from '../lib/data/context';
+import { categories, cities, reviews, blogs } from '../lib/data/context';
 import { getPublishedListings, slugify } from '../lib/supabase/listings';
 export const prerender = false;
 
@@ -86,26 +86,7 @@ const listings3 = await getPublishedListings(Astro.locals.supabase, { limit: 8 }
 <!-- Hero End -->
 
 
-<!-- Brand Image Start -->
-<section class="py-5 pb-0">
-	<div class="container">
-		<div class="row align-items-center justify-content-center">
-			<div class="col-xl-12 col-lg-12 col-md-12 col-12">
-				<div class="owl-carousel brand-slider">
-
-					<!-- Components/Home/index/brand.html -->
-					{brands.map((item) => (
-					<div class="brand-slide px-3 px-lg-5">
-					    <img src={item.img} class="light-mode-item img-fluid" alt="brand image">
-					</div>
-					))}
-
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
-<!-- Brand Image End -->
+{/* Brand logos strip (Codrops / Shopify / Airbnb / PayPal / Hubspot) removed — was template filler, not real partners. */}
 
 
 <!-- Trending Category Start -->
