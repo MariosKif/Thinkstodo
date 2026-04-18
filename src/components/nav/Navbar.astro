@@ -145,7 +145,12 @@ if (user) {
   (function () {
     const currentPath = window.location.pathname.replace(/\/$/, '');
     document.querySelectorAll('.sub-menu-item').forEach((item) => {
-      const itemPath = new URL(item.href).pathname.replace(/\/$/, '');
+      let itemPath;
+      try {
+        itemPath = new URL(item.href).pathname.replace(/\/$/, '');
+      } catch {
+        return; // href is "JavaScript:Void(0);" or similar — skip.
+      }
       if (itemPath !== currentPath) return;
       item.classList.add('active');
       let parentMenu = item.closest('.parent-menu-item');

@@ -101,11 +101,12 @@
             const navigationElement = $(selector);
     
             navigationElement.find(".nav-menus-wrapper").prepend(`
-                <div class='mobLogos'>
-                    <img src='/static/assets/img/logo.svg' class='img-fluid lightLogo' alt='Logo'>
-                </div>
                 <span class='nav-menus-wrapper-close-button'>✕</span>
             `);
+            // Template used to also prepend a <div class='mobLogos'> pointing at
+            // /static/assets/img/logo.svg — a Django path that 404s here, and
+            // Navbar.astro now ships a real mobile-only logo (.mobile-menu-logo)
+            // so this injection is redundant.
     
             if (navigationElement.find(".nav-search").length > 0) {
                 navigationElement.find(".nav-search form").prepend("<span class='nav-search-close-button'>✕</span>");

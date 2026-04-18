@@ -130,10 +130,31 @@ export async function searchListings(
   { q, categorySlug, city, limit = 40 }: { q?: string; categorySlug?: string; city?: string; limit?: number }
 ): Promise<ListingCard[]> {
   if (!supabase) return [];
+
+  // When q is set, also pull any categories whose name ilike matches — e.g.
+  // typing "gym" should surface listings in "Fitness & Gym" even if no
+  // individual row mentions the word in its title/description.
+  let matchingCategoryIds: number[] = [];
+  if (q && q.trim()) {
+    const { data: cats } = await supabase
+      .from('categories')
+      .select('id')
+      .ilike('name', `%${q.trim()}%`);
+    if (cats) matchingCategoryIds = cats.map((c: any) => c.id);
+  }
+
   let query = supabase.from('listings').select(SELECT).eq('status', 'published');
   if (q && q.trim()) {
     const needle = `%${q.trim()}%`;
-    query = query.or(`title.ilike.${needle},description.ilike.${needle},city.ilike.${needle}`);
+    const parts = [
+      `title.ilike.${needle}`,
+      `description.ilike.${needle}`,
+      `city.ilike.${needle}`,
+    ];
+    if (matchingCategoryIds.length > 0) {
+      parts.push(`category_id.in.(${matchingCategoryIds.join(',')})`);
+    }
+    query = query.or(parts.join(','));
   }
   if (city) query = query.ilike('city', `%${city}%`);
   if (categorySlug) {
