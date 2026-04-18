@@ -6,225 +6,248 @@ import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
-import { rows, messages, invoices } from '../lib/data/context';
 export const prerender = false;
 
 const user = Astro.locals.user!;
+const supabase = Astro.locals.supabase!;
 const fullName = (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'there';
+
+// Counts — run in parallel.
+const [listingCountRes, bookingCountRes, bookmarkCountRes, reviewCountRes] = await Promise.all([
+  supabase.from('listings').select('id', { count: 'exact', head: true }).eq('owner_id', user.id),
+  supabase.from('bookings').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+  supabase.from('bookmarks').select('listing_id', { count: 'exact', head: true }).eq('user_id', user.id),
+  supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+]);
+
+const stats = [
+  {
+    title: 'My Listings',
+    number: listingCountRes.count ?? 0,
+    icon: 'bi bi-ui-radios-grid',
+    style: 'bg-light-primary text-primary',
+    href: '/dashboard-my-listings/',
+  },
+  {
+    title: 'My Bookings',
+    number: bookingCountRes.count ?? 0,
+    icon: 'bi bi-journal-check',
+    style: 'bg-light-success text-success',
+    href: '/dashboard-my-bookings/',
+  },
+  {
+    title: 'Bookmarks',
+    number: bookmarkCountRes.count ?? 0,
+    icon: 'bi bi-bookmark-star',
+    style: 'bg-light-warning text-warning',
+    href: '/dashboard-bookmarks/',
+  },
+  {
+    title: 'Reviews Given',
+    number: reviewCountRes.count ?? 0,
+    icon: 'bi bi-chat-square-quote',
+    style: 'bg-light-danger text-danger',
+    href: '/dashboard-reviews/',
+  },
+];
+
+// Recent activity — merge the user's last few bookings + reviews + new bookmarks
+// into a single timeline, newest first.
+type Activity = {
+  at: string;
+  icon: string;
+  tone: string;
+  kind: 'booking' | 'review' | 'bookmark';
+  title: string;
+  slug: string | null;
+  badge?: { tone: string; label: string };
+};
+
+const [bookingsRes, reviewsRes, bookmarksRes] = await Promise.all([
+  supabase
+    .from('bookings')
+    .select('id, status, created_at, listings(slug, title)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(5),
+  supabase
+    .from('reviews')
+    .select('id, rating, created_at, listings(slug, title)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(5),
+  supabase
+    .from('bookmarks')
+    .select('created_at, listings(slug, title)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(5),
+]);
+
+const activities: Activity[] = [];
+
+for (const b of (bookingsRes.data ?? []) as any[]) {
+  activities.push({
+    at: b.created_at,
+    icon: 'bi bi-journal-check',
+    tone: 'bg-light-success text-success',
+    kind: 'booking',
+    title: b.listings?.title ?? 'a removed listing',
+    slug: b.listings?.slug ?? null,
+    badge: b.status
+      ? { tone: b.status === 'confirmed' ? 'high' : b.status === 'cancelled' ? 'low' : 'mid', label: b.status }
+      : undefined,
+  });
+}
+
+for (const r of (reviewsRes.data ?? []) as any[]) {
+  activities.push({
+    at: r.created_at,
+    icon: 'bi bi-star',
+    tone: 'bg-light-warning text-warning',
+    kind: 'review',
+    title: r.listings?.title ?? 'a removed listing',
+    slug: r.listings?.slug ?? null,
+    badge: { tone: r.rating >= 4 ? 'high' : r.rating >= 3 ? 'mid' : 'low', label: String(r.rating) },
+  });
+}
+
+for (const b of (bookmarksRes.data ?? []) as any[]) {
+  activities.push({
+    at: b.created_at,
+    icon: 'bi bi-heart',
+    tone: 'bg-light-danger text-danger',
+    kind: 'bookmark',
+    title: b.listings?.title ?? 'a removed listing',
+    slug: b.listings?.slug ?? null,
+  });
+}
+
+activities.sort((a, b) => (b.at ?? '').localeCompare(a.at ?? ''));
+const recentActivity = activities.slice(0, 6);
+
+function verbFor(kind: Activity['kind']): string {
+  if (kind === 'booking') return 'You booked';
+  if (kind === 'review') return 'You reviewed';
+  return 'You bookmarked';
+}
 ---
 <Base title="Dashboard - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />
 
   <Preloader />
 
-  <!-- Dashboard Start -->
   <section class="p-0">
     <div class="container-fluid p-0">
       <div class="row user-dashboard g-0 pt-lg-0 pt-5">
 
-        <!-- Dashboard Sidebar -->
         <div class="col-xl-2 col-lg-3 col-md-12">
           <DashboardSidebar current="user" />
         </div>
 
-        <!-- Dashboard Content -->
         <div class="col-xl-10 col-lg-9 col-md-12">
           <div class="user-dashboard-box bg-light">
 
-            <!-- Dashboard Title -->
             <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
               <h2 class="fw-medium mb-0">Hello, {fullName}</h2>
+              <p class="text-muted mt-2 mb-0">Here's what's happening with your account today.</p>
             </div>
 
-            <!-- Dashboard Details -->
             <div class="dashCaption p-xl-5 p-3 p-md-4">
 
-              <!-- Row Start -->
-              <div class="row align-items-start g-4 mb-4">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                  <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                    Your listing <strong>Holy Guacamole!</strong> has been approved!.
-                    <button type="button" class="btn-close text-sm text-primary" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                </div>
-              </div>
-              <!-- Row End -->
-
-              <!-- Row Start -->
+              <!-- Stat cards -->
               <div class="row align-items-start g-4 mb-lg-5 mb-4">
-
-                <!-- Components/User-Dashboard/dashboard-user/row.html -->
-                {rows.map((item: any) => (
+                {stats.map((stat) => (
                   <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6">
-                    <div class="card rounded-3 position-relative p-4">
-                      <div class={`position-absolute w-30 h-100 ${item.style} start-0 top-0 rounded-end-pill`}><div class="position-absolute top-50 start-50 translate-middle"><i class={item.icon}></i></div></div>
-                      <div class="d-flex flex-column align-items-end justify-content-end ht-80">
-                        <h2 class="mb-0"><span class="ctr counter-value" data-target={item.number}> {item.price}</span>{item.symbol}</h2>
-                        <p class="text-muted-2 fw-medium mb-0">{item.title}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-              </div>
-              <!-- Row End -->
-
-              <!-- Row Start -->
-              <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-6 col-lg-6 col-md-12">
-                  <div class="card rounded-3 shadow-sm">
-                    <div class="card-header py-3 px-4">
-                      <h4 class="m-0">Recent Activities</h4>
-                    </div>
-                    <div class="card-body p-0">
-                      <ul class="dashboardListgroup">
-
-                        <!-- Components/User-Dashboard/dashboard-user/activities.html -->
-                        <li>
-                          <span class="icons bg-light-warning text-warning"><i class="bi bi-star"></i></span>
-                          <div class="listCaps">Mortin Musk left a review<span class="ratting high">4.2</span>on <a href="/single-listing-01/" class="listing-link">Snow Restaurants</a></div>
-                        </li>
-                        <li>
-                          <span class="icons bg-light-danger text-danger"><i class="bi bi-heart"></i></span>
-                          <div class="listCaps">Someone bookmark your <a href="/single-listing-01/" class="listing-link">Pepsco Cafe</a> Listing</div>
-                        </li>
-                        <li>
-                          <span class="icons bg-light-warning text-warning"><i class="bi bi-star"></i></span>
-                          <div class="listCaps">Arun Kovil left a review<span class="ratting mid">3.7</span>on <a href="/single-listing-01/" class="listing-link">Blue Crystel</a></div>
-                        </li>
-                        <li>
-                          <span class="icons bg-light-success text-success"><i class="bi bi-check-circle"></i></span>
-                          <div class="listCaps">Your listing <a href="/single-listing-01/" class="listing-link">Craft Casino</a> has been approved!</div>
-                        </li>
-                        <li>
-                          <span class="icons bg-light-warning text-warning"><i class="bi bi-star"></i></span>
-                          <div class="listCaps">Arun Kovil left a review<span class="ratting low">2.9</span>on <a href="/single-listing-01/" class="listing-link">Sagar Salon</a></div>
-                        </li>
-
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-xl-6 col-lg-6 col-md-12">
-                  <div class="card rounded-3 shadow-sm">
-                    <div class="card-header py-3 px-4">
-                      <h4 class="m-0">Messages</h4>
-                      <a href="#" class="text-muted-2 text-md fw-medium">View All</a>
-                    </div>
-                    <div class="card-body p-4">
-                      <div class="messagesWrapers d-flex flex-column gap-4">
-
-                        <!-- Components/User-Dashboard/dashboard-user/messages.html -->
-                        {messages.map((item: any) => (
-                          <div class="singleMessagesline">
-                            <a href="#" class="d-flex align-items-center justify-content-start gap-2">
-                              <div class="msgLinethumb"><div class="square--50 circle"><img src={item.img} class="img-fluid circle" alt="" /></div></div>
-                              <div class="msgLinecaption flex-fill">
-                                <div class="msglineTitle d-flex align-items-center justify-content-between gap-3">
-                                  <h6 class="fw-semibold m-0">{item.title}</h6>
-                                  <span class="text-sm fw-medium text-muted">{item.time}</span>
-                                </div>
-                                <div class="msglineParag d-flex align-items-center justify-content-between gap-3">
-                                  <p class="text-md m-0">{item.desc}</p>
-
-                                  {item.tag === 'true' && (
-                                    <span class="square--20 circle bg-primary text-light text-sm">{item.number}</span>
-                                  )}
-
-                                </div>
-                              </div>
-                            </a>
-                          </div>
-                        ))}
-
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- Row End -->
-
-              <!-- Row Start -->
-              <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
-                  <div class="card rounded-3 shadow-sm">
-                    <div class="card-header flex-wrap gap-3 px-4">
-                      <div class="cardTitle"><h4>View Invoices</h4></div>
-
-                      <div class="headerInformations">
-                        <div class="d-flex align-items-center justify-content-start justify-content-md-between flex-wrap gap-3">
-                          <div class="singleCaps">
-                            <div class="form-group position-relative m-0">
-                              <input type="text" class="form-control form-control-md bg-light border-0 ps-5" placeholder="Search any parameters..." />
-                              <span class="position-absolute top-50 start-0 translate-middle-y ms-3"><i class="fa-solid fa-magnifying-glass"></i></span>
-                            </div>
-                          </div>
+                    <a href={stat.href} class="text-decoration-none">
+                      <div class="card rounded-3 position-relative p-4 hovershadow">
+                        <div class={`position-absolute w-30 h-100 ${stat.style} start-0 top-0 rounded-end-pill`}>
+                          <div class="position-absolute top-50 start-50 translate-middle"><i class={stat.icon}></i></div>
+                        </div>
+                        <div class="d-flex flex-column align-items-end justify-content-end ht-80">
+                          <h2 class="mb-0 text-dark">{stat.number}</h2>
+                          <p class="text-muted-2 fw-medium mb-0">{stat.title}</p>
                         </div>
                       </div>
+                    </a>
+                  </div>
+                ))}
+              </div>
+
+              <!-- Recent activity + quick actions -->
+              <div class="row align-items-start g-4 mb-lg-5 mb-4">
+                <div class="col-xl-8 col-lg-7 col-md-12">
+                  <div class="card rounded-3 shadow-sm">
+                    <div class="card-header py-3 px-4">
+                      <h4 class="m-0">Recent Activity</h4>
                     </div>
-
-                    <div class="card-body p-3">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th scope="col">Package Name</th>
-                            <th scope="col">Order ID</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Due Date</th>
-                            <th scope="col">View</th>
-                          </tr>
-                        </thead>
-
-                        <tbody>
-
-                          <!-- Components/User-Dashboard/dashboard-user/invoices.html -->
-                          {invoices.map((item: any) => (
-                            <tr>
-                              <td data-label="Package Name">{item.title}</td>
-                              <td data-label="Order ID">{item.id}</td>
-                              <td data-label="Status"><span class={`badge badge-xs ${item.style} rounded-pill`}>{item.status}</span></td>
-                              <td data-label="Due Date"><span class="text-normal">{item.date}</span></td>
-                              <td data-label="View"><a href="/invoice-page/" class="btn btn-sm fw-medium btn-light-primary rounded-pill">{item.btn}</a></td>
-                            </tr>
+                    <div class="card-body p-0">
+                      {recentActivity.length === 0 ? (
+                        <div class="p-4 text-center">
+                          <p class="text-muted mb-3">No activity yet. Browse listings, leave a review, or create your own listing to get started.</p>
+                          <div class="d-flex gap-2 justify-content-center flex-wrap">
+                            <a href="/listings/" class="btn btn-sm btn-light rounded-pill"><i class="bi bi-search me-1"></i>Browse</a>
+                            <a href="/dashboard-add-listing/" class="btn btn-sm btn-primary rounded-pill"><i class="bi bi-plus-circle me-1"></i>Add Listing</a>
+                          </div>
+                        </div>
+                      ) : (
+                        <ul class="dashboardListgroup">
+                          {recentActivity.map((item) => (
+                            <li>
+                              <span class={`icons ${item.tone}`}><i class={item.icon}></i></span>
+                              <div class="listCaps">
+                                {verbFor(item.kind)}
+                                {item.kind === 'review' && item.badge && (
+                                  <span class={`ratting ${item.badge.tone}`}>{item.badge.label}</span>
+                                )}
+                                {item.slug
+                                  ? <a href={`/listing/${item.slug}/`} class="listing-link">{item.title}</a>
+                                  : <span>{item.title}</span>}
+                                {item.kind === 'booking' && item.badge && (
+                                  <span class={`ratting ${item.badge.tone}`}>{item.badge.label}</span>
+                                )}
+                              </div>
+                            </li>
                           ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
-                        </tbody>
-                      </table>
+                <div class="col-xl-4 col-lg-5 col-md-12">
+                  <div class="card rounded-3 shadow-sm">
+                    <div class="card-header py-3 px-4">
+                      <h4 class="m-0">Quick Actions</h4>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column gap-2">
+                      <a href="/dashboard-add-listing/" class="btn btn-primary rounded-pill fw-medium"><i class="bi bi-plus-circle me-2"></i>Add a new listing</a>
+                      <a href="/dashboard-my-listings/" class="btn btn-light rounded-pill fw-medium"><i class="bi bi-ui-radios-grid me-2"></i>Manage my listings</a>
+                      <a href="/listings/" class="btn btn-light rounded-pill fw-medium"><i class="bi bi-search me-2"></i>Browse listings</a>
+                      <a href="/dashboard-my-profile/" class="btn btn-light rounded-pill fw-medium"><i class="bi bi-person-lines-fill me-2"></i>Edit profile</a>
+                      <form action="/api/auth/signout" method="post" class="m-0">
+                        <button type="submit" class="btn btn-light-danger rounded-pill fw-medium w-100"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</button>
+                      </form>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- Row End -->
 
-              <!-- Row Start -->
               <div class="row align-items-start g-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
-                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo. Develop with <i class="mdi mdi-heart text-danger"></i> by <a href="https://shreethemes.in" target="_blank" class="text-reset">Shreethemes</a>.</p>
+                <div class="col-12">
+                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo.</p>
                 </div>
               </div>
 
             </div>
-
           </div>
         </div>
 
       </div>
     </div>
   </section>
-  <!-- Dashboard End -->
 
-
-  <!-- Components/Home/index/cart.html -->
-  <!-- Components/Home/index/search.html -->
   <SearchOffcanvas />
-
-
-  <!-- Components/Home/index/log.html -->
   <LoginModal />
-
-
   <Footer />
 </Base>
-</content>
-</invoke>
