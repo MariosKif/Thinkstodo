@@ -194,8 +194,7 @@ const markersPayload = mappable.map((l) => ({
         ].join('');
         marker.bindPopup(popupHtml, { autoPan: false });
         marker.on('click', function () {
-          map.setView(marker.getLatLng(), Math.max(map.getZoom(), 14), { animate: true });
-          highlightCard(l.id);
+          focusMarker(marker, l.id);
         });
         markers[l.id] = marker;
         bounds.push([l.lat, l.lng]);
@@ -213,12 +212,25 @@ const markersPayload = mappable.map((l) => ({
           const id = card.getAttribute('data-listing-id');
           const m = id ? markers[id] : null;
           if (m) {
-            map.setView(m.getLatLng(), Math.max(map.getZoom(), 13), { animate: true });
-            m.openPopup();
-            highlightCard(id);
+            focusMarker(m, id, { openPopup: true });
           }
         });
       });
+
+      // Center the map on the target marker. On narrow viewports the popup
+      // opens above the marker, so we nudge the map so the marker sits ~1/3
+      // from the bottom — that keeps the popup fully inside the map area.
+      function focusMarker(marker, id, opts) {
+        const options = opts || {};
+        const targetZoom = Math.max(map.getZoom(), 14);
+        map.setView(marker.getLatLng(), targetZoom, { animate: true });
+        if (window.innerWidth < 992) {
+          const h = map.getSize().y;
+          map.panBy([0, -h / 6], { animate: true });
+        }
+        if (options.openPopup) marker.openPopup();
+        highlightCard(id);
+      }
 
       function highlightCard(id) {
         document.querySelectorAll('.lm-card').forEach(function (c) {
