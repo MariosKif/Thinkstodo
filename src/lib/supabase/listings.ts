@@ -95,6 +95,25 @@ export async function getPublishedListings(
   return data.map(row2card);
 }
 
+export async function getMappableListings(
+  supabase: DB | null,
+  opts: { limit?: number } = {}
+): Promise<ListingCard[]> {
+  if (!supabase) return [];
+  let q = supabase
+    .from('listings')
+    .select(SELECT)
+    .eq('status', 'published')
+    .not('lat', 'is', null)
+    .not('lng', 'is', null)
+    .order('is_featured', { ascending: false })
+    .order('rating', { ascending: false, nullsFirst: false });
+  if (opts.limit) q = q.limit(opts.limit);
+  const { data, error } = await q;
+  if (error || !data) return [];
+  return data.map(row2card);
+}
+
 export async function getListingBySlug(supabase: DB | null, slug: string) {
   if (!supabase) return null;
   const { data } = await supabase
