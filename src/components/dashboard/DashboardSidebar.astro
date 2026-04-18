@@ -1,5 +1,5 @@
 ---
-import { getMyProfile, getUnreadMessageCount } from '../../lib/supabase/profiles';
+import { getMyProfile } from '../../lib/supabase/profiles';
 
 interface Props {
   current: 'user' | 'my-profile' | 'my-bookings' | 'my-listings' | 'bookmarks' | 'messages' | 'reviews' | 'wallet' | 'add-listing';
@@ -10,12 +10,10 @@ const user = Astro.locals.user;
 const supabase = Astro.locals.supabase;
 let fullName = 'Welcome';
 let avatarUrl = '/assets/img/team-2.jpg';
-let unread = 0;
 if (user && supabase) {
   const profile = await getMyProfile(supabase, user.id);
   fullName = profile?.full_name || user.email?.split('@')[0] || 'Account';
   avatarUrl = profile?.avatar_url || avatarUrl;
-  unread = await getUnreadMessageCount(supabase, user.id);
 }
 ---
 <div class="user-dashboard-inner h-100 border-end border-2 py-5 p-3 d-lg-block d-none">

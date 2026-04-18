@@ -20,12 +20,17 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     return redirect('/dashboard-my-profile/?emailerror=' + encodeURIComponent('Enter a valid email'));
   }
 
-  const { error } = await supabase.auth.updateUser({ email });
+  const { data, error } = await supabase.auth.updateUser({ email });
   if (error) {
     return redirect('/dashboard-my-profile/?emailerror=' + encodeURIComponent(error.message));
   }
 
-  return redirect('/dashboard-my-profile/?emailnotice=' + encodeURIComponent(
-    'Check your inbox to confirm the new email.'
-  ));
+  // Supabase returns the current email on `data.user.email`. When secure
+  // email change is enabled (default), the address hasn't switched yet — a
+  // confirmation link was emailed. Otherwise the new email is already live.
+  const applied = data?.user?.email === email;
+  const notice = applied
+    ? 'Email updated.'
+    : 'Confirmation link sent — click it from your new email to finish the change.';
+  return redirect('/dashboard-my-profile/?emailnotice=' + encodeURIComponent(notice));
 };

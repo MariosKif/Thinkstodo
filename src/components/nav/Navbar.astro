@@ -15,9 +15,20 @@ const {
 } = Astro.props;
 
 const user = Astro.locals?.user ?? null;
-const userLabel = user
-  ? ((user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'Account')
-  : null;
+const supabase = Astro.locals?.supabase ?? null;
+
+let userLabel: string | null = null;
+let userAvatar: string | null = null;
+if (user) {
+  userLabel = (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'Account';
+  if (supabase) {
+    // getMyProfile import is local to this file so the component stays self-contained.
+    const { getMyProfile } = await import('../../lib/supabase/profiles');
+    const profile = await getMyProfile(supabase, user.id);
+    if (profile?.full_name) userLabel = profile.full_name;
+    if (profile?.avatar_url) userAvatar = profile.avatar_url;
+  }
+}
 ---
 <!-- Start Navigation -->
 <div class={headerClass} data-sticky-element="">
@@ -86,7 +97,12 @@ const userLabel = user
           {user ? (
             <>
               <li class="parent-parent-menu-item">
-                <a href="JavaScript:Void(0);" class="home-link d-flex align-items-center"><i class="bi bi-person-circle fs-6 me-1"></i><span class="navCl">{userLabel}</span><span class="submenu-indicator"></span></a>
+                <a href="JavaScript:Void(0);" class="home-link d-flex align-items-center">
+                  {userAvatar
+                    ? <img src={userAvatar} class="me-2" style="width:28px;height:28px;object-fit:cover;border-radius:50%;" alt={userLabel ?? 'Account'} />
+                    : <i class="bi bi-person-circle fs-5 me-2"></i>}
+                  <span class="navCl">{userLabel}</span><span class="submenu-indicator"></span>
+                </a>
                 <ul class="nav-dropdown nav-submenu">
                   <li><a href="/dashboard-user/" class="sub-menu-item"><i class="bi bi-speedometer me-1"></i>Dashboard</a></li>
                   <li><a href="/dashboard-my-profile/" class="sub-menu-item"><i class="bi bi-person-lines-fill me-1"></i>My Profile</a></li>

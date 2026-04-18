@@ -34,6 +34,13 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     return redirect('/dashboard-my-profile/?delerror=' + encodeURIComponent(error.message));
   }
 
-  await supabase.auth.signOut();
+  // Best-effort sign-out. The session may already be invalid now that the
+  // underlying auth.users row is gone — swallow any error so we always
+  // reach the final redirect.
+  try {
+    await supabase.auth.signOut();
+  } catch {
+    // intentionally ignored
+  }
   return redirect('/?notice=' + encodeURIComponent('Your account has been deleted.'));
 };
