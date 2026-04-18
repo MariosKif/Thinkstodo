@@ -364,28 +364,58 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address: string | null
           avatar_url: string | null
+          bio: string | null
+          city: string | null
+          country: string | null
           created_at: string | null
           full_name: string | null
           id: string
+          lat: number | null
+          lng: number | null
           phone: string | null
+          social_links: Json | null
+          state: string | null
           updated_at: string | null
+          website: string | null
+          zip: string | null
         }
         Insert: {
+          address?: string | null
           avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
           full_name?: string | null
           id: string
+          lat?: number | null
+          lng?: number | null
           phone?: string | null
+          social_links?: Json | null
+          state?: string | null
           updated_at?: string | null
+          website?: string | null
+          zip?: string | null
         }
         Update: {
+          address?: string | null
           avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
           full_name?: string | null
           id?: string
+          lat?: number | null
+          lng?: number | null
           phone?: string | null
+          social_links?: Json | null
+          state?: string | null
           updated_at?: string | null
+          website?: string | null
+          zip?: string | null
         }
         Relationships: []
       }

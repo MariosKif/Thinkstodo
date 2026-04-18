@@ -6,349 +6,182 @@ import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
+import { getMyProfile } from '../lib/supabase/profiles';
 export const prerender = false;
+
+const user = Astro.locals.user!;
+const supabase = Astro.locals.supabase!;
+const profile = await getMyProfile(supabase, user.id);
+
+const social = (profile?.social_links as Record<string, string | null> | null) ?? {};
+
+const p = Astro.url.searchParams;
+const error = p.get('error');
+const notice = p.get('notice');
+const pwError = p.get('pwerror');
+const pwNotice = p.get('pwnotice');
+const emailError = p.get('emailerror');
+const emailNotice = p.get('emailnotice');
+const delError = p.get('delerror');
 ---
 <Base title="My Profile - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />
-
   <Preloader />
 
-  <!-- Dashboard Start -->
   <section class="p-0">
     <div class="container-fluid p-0">
       <div class="row user-dashboard g-0 pt-lg-0 pt-5">
 
-        <!-- Dashboard Sidebar -->
         <div class="col-xl-2 col-lg-3 col-md-12">
           <DashboardSidebar current="my-profile" />
         </div>
 
-        <!-- Dashboard Content -->
         <div class="col-xl-10 col-lg-9 col-md-12">
           <div class="user-dashboard-box bg-light">
-
-            <!-- Dashboard Title -->
             <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
               <h2 class="fw-medium mb-0">My Profile</h2>
+              <p class="text-muted mt-2 mb-0">Update your personal details, change your email or password, or close your account.</p>
             </div>
 
-            <!-- Dashboard Details -->
             <div class="dashCaption p-xl-5 p-3 p-md-4">
 
-              <!-- Row Start -->
-              <div class="row align-items-start g-4 mb-lg-5 mb-4">
-                <div class="col-xl-8 col-lg-8 col-md-7">
+              {notice && <div class="alert alert-success">{notice}</div>}
+              {error && <div class="alert alert-danger">{error}</div>}
 
-                  <!-- User Profile Area -->
-                  <div class="card rounded-3 shadow-sm mb-lg-5 mb-4">
-                    <div class="card-body p-4">
+              <form action="/api/profile" method="post" enctype="multipart/form-data" class="row align-items-start g-4 mb-lg-5 mb-4">
+                <div class="col-xl-9 col-lg-8">
 
-                      <div class="row align-items-start">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
-                          <div class="cardTitle d-flex align-items-center justify-content-start mb-3">
-                            <h6 class="fw-semibold">Agent Basic information</h6>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Form -->
-                      <div class="row align-items-start">
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>First Name</label>
-                            <input type="text" class="form-control" placeholder="Daniel" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Last Name</label>
-                            <input type="text" class="form-control" placeholder="Decuze" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Phone</label>
-                            <input type="tel" class="form-control" placeholder="5684526582" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" class="form-control" placeholder="danieldecuze@gmail.com" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-12 col-lg-12 col-md-12">
-                          <div class="form-group">
-                            <label>Member of</label>
-                            <input type="text" class="form-control" placeholder="Daniel" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-12 col-lg-12 col-md-12">
-                          <div class="form-group">
-                            <label>About Me</label>
-                            <textarea class="form-control"></textarea>
-                          </div>
-                        </div>
-
-                      </div>
-
-                    </div>
-                  </div>
-
-                  <!-- Contact Information Wrap -->
-                  <div class="card rounded-3 shadow-sm mb-lg-5 mb-4">
-                    <div class="card-body p-4">
-
-                      <!-- Contact Information Form -->
-                      <div class="row align-items-start">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
-                          <div class="cardTitle d-flex align-items-center justify-content-start mb-3">
-                            <h6 class="fw-semibold">Contact Information</h6>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Form -->
-                      <div class="row align-items-start mb-4">
-
-                        <div class="col-xl-12 col-lg-12 col-md-12">
-                          <div class="form-group">
-                            <label>Address 1</label>
-                            <input type="text" class="form-control" placeholder="123 Moobek Marg, Sirathu" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>City</label>
-                            <input type="text" class="form-control" placeholder="Denver" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>State</label>
-                            <input type="tel" class="form-control" placeholder="New York" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Country</label>
-                            <input type="text" class="form-control" placeholder="United State" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Zip Code</label>
-                            <input type="text" class="form-control" placeholder="HQ4560R" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Latitude</label>
-                            <input type="text" class="form-control" placeholder="+568452568" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Longitude</label>
-                            <input type="text" class="form-control" placeholder="-45695824" />
-                          </div>
-                        </div>
-
-                      </div>
-
-                      <!-- Contact Information Form -->
-                      <div class="row align-items-start">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
-                          <div class="cardTitle d-flex align-items-center justify-content-start mb-3">
-                            <h6 class="fw-semibold">Social Accounts</h6>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Form -->
-                      <div class="row align-items-start">
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Facebook</label>
-                            <input type="text" class="form-control" placeholder="" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Twitter</label>
-                            <input type="text" class="form-control" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>LinkedIn</label>
-                            <input type="tel" class="form-control" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Dribbble</label>
-                            <input type="text" class="form-control" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Pinterest</label>
-                            <input type="text" class="form-control" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Vimeo URL</label>
-                            <input type="text" class="form-control" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Youtube URL</label>
-                            <input type="text" class="form-control" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Website URL</label>
-                            <input type="text" class="form-control" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-12 col-lg-12 col-md-12">
-                          <div class="d-flex align-items-center justify-content-start flex-wrap gap-3 mt-3">
-                            <button class="btn btn-primary fw-medium flex-fill" type="button">Update Profile</button>
-                            <button class="btn btn-light-primary fw-medium flex-fill" type="button">Reset Profile</button>
-                          </div>
-                        </div>
-
-                      </div>
-
-                    </div>
-                  </div>
-
-                  <!-- Contact Information Wrap -->
                   <div class="card rounded-3 shadow-sm">
-                    <div class="card-body p-4">
-
-                      <!-- Contact Information Form -->
-                      <div class="row align-items-start">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
-                          <div class="cardTitle d-flex align-items-center justify-content-start mb-3">
-                            <h6 class="fw-semibold">Update Password</h6>
-                          </div>
+                    <div class="card-header py-3 px-4"><h4 class="m-0">Profile</h4></div>
+                    <div class="card-body">
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <label class="lableTitle">Full name</label>
+                          <input type="text" name="full_name" value={profile?.full_name ?? ''} class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                          <label class="lableTitle">Phone</label>
+                          <input type="tel" name="phone" value={profile?.phone ?? ''} class="form-control" placeholder="+1 555 555 0100" />
+                        </div>
+                        <div class="col-12">
+                          <label class="lableTitle">About me</label>
+                          <textarea name="bio" rows="4" class="form-control" placeholder="Tell people a bit about yourself…">{profile?.bio ?? ''}</textarea>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="lableTitle">Website</label>
+                          <input type="url" name="website" value={profile?.website ?? ''} class="form-control" placeholder="https://…" />
                         </div>
                       </div>
-
-                      <!-- Form -->
-                      <div class="row align-items-start">
-
-                        <div class="col-xl-12 col-lg-12 col-md-12">
-                          <div class="form-group">
-                            <label>Old Password</label>
-                            <input type="password" class="form-control" placeholder="" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>New Password</label>
-                            <input type="password" class="form-control" placeholder="" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6">
-                          <div class="form-group">
-                            <label>Confirm Password</label>
-                            <input type="password" class="form-control" placeholder="" />
-                          </div>
-                        </div>
-
-                        <div class="col-xl-12 col-lg-12 col-md-12">
-                          <div class="d-flex align-items-center justify-content-start flex-wrap gap-3 mt-3">
-                            <button class="btn btn-primary fw-medium flex-fill" type="button">Update Password</button>
-                            <button class="btn btn-light-primary fw-medium flex-fill" type="button">Delete Account</button>
-                          </div>
-                        </div>
-
-                      </div>
-
                     </div>
                   </div>
 
+                  <div class="card rounded-3 shadow-sm mt-4">
+                    <div class="card-header py-3 px-4"><h4 class="m-0">Address</h4></div>
+                    <div class="card-body">
+                      <div class="row g-3">
+                        <div class="col-12">
+                          <label class="lableTitle">Street address</label>
+                          <input type="text" name="address" value={profile?.address ?? ''} class="form-control" />
+                        </div>
+                        <div class="col-md-4"><label class="lableTitle">City</label><input type="text" name="city" value={profile?.city ?? ''} class="form-control" /></div>
+                        <div class="col-md-4"><label class="lableTitle">State / Region</label><input type="text" name="state" value={profile?.state ?? ''} class="form-control" /></div>
+                        <div class="col-md-4"><label class="lableTitle">Zip / Postal</label><input type="text" name="zip" value={profile?.zip ?? ''} class="form-control" /></div>
+                        <div class="col-md-4"><label class="lableTitle">Country</label><input type="text" name="country" value={profile?.country ?? ''} class="form-control" /></div>
+                        <div class="col-md-4"><label class="lableTitle">Latitude</label><input type="number" step="0.0000001" name="lat" value={profile?.lat ?? ''} class="form-control" /></div>
+                        <div class="col-md-4"><label class="lableTitle">Longitude</label><input type="number" step="0.0000001" name="lng" value={profile?.lng ?? ''} class="form-control" /></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card rounded-3 shadow-sm mt-4">
+                    <div class="card-header py-3 px-4"><h4 class="m-0">Social links</h4></div>
+                    <div class="card-body">
+                      <div class="row g-3">
+                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-facebook me-2"></i>Facebook</label><input type="url" name="facebook" value={social.facebook ?? ''} class="form-control" placeholder="https://facebook.com/…" /></div>
+                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-twitter me-2"></i>Twitter / X</label><input type="url" name="twitter" value={social.twitter ?? ''} class="form-control" /></div>
+                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-linkedin me-2"></i>LinkedIn</label><input type="url" name="linkedin" value={social.linkedin ?? ''} class="form-control" /></div>
+                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-instagram me-2"></i>Instagram</label><input type="url" name="instagram" value={social.instagram ?? ''} class="form-control" /></div>
+                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-youtube me-2"></i>YouTube</label><input type="url" name="youtube" value={social.youtube ?? ''} class="form-control" /></div>
+                        <div class="col-md-6"><label class="lableTitle"><i class="fa-brands fa-dribbble me-2"></i>Dribbble</label><input type="url" name="dribbble" value={social.dribbble ?? ''} class="form-control" /></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-4 d-flex gap-2 flex-wrap">
+                    <button type="submit" class="btn btn-primary rounded-pill fw-medium"><i class="bi bi-check-circle me-2"></i>Save Profile</button>
+                    <a href="/dashboard-my-profile/" class="btn btn-light rounded-pill fw-medium">Reset</a>
+                  </div>
                 </div>
 
-                <div class="col-xl-4 col-lg-4 col-md-5">
+                <div class="col-xl-3 col-lg-4">
                   <div class="card rounded-3 shadow-sm">
-                    <div class="card-body py-5 p-4">
-                      <div class="dash-prf-start d-flex flex-column align-items-start justify-content-start">
-                        <div class="dash-prf-start-upper mx-auto">
-                          <div class="dash-prf-start-thumb w-40 h-40 mb-2">
-                            <figure><img src="/assets/img/team-2.jpg" class="img-fluid circle" alt="" /></figure>
-                          </div>
-                        </div>
-                        <div class="dash-prf-start-bottom mx-auto mt-3">
-                          <div class="upload-btn-wrapper small">
-                            <button class="btn btn-md btn-light-primary fw-medium">Change Profile Image</button>
-                            <input type="file" name="myfile" />
-                          </div>
-                        </div>
-                      </div>
+                    <div class="card-header py-3 px-4"><h4 class="m-0">Avatar</h4></div>
+                    <div class="card-body text-center">
+                      <img src={profile?.avatar_url ?? '/assets/img/team-2.jpg'} class="img-fluid rounded-circle mb-3" style="width: 140px; height: 140px; object-fit: cover;" alt="Avatar" />
+                      <label class="form-label d-block text-start">Replace avatar</label>
+                      <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif" class="form-control form-control-sm" />
+                      <p class="text-muted text-md mt-2 mb-0">JPG / PNG / WebP / GIF, ≤ 1 MB.</p>
+                    </div>
+                  </div>
+                </div>
+              </form>
+
+              <div class="row g-4 mb-lg-5 mb-4">
+                <div class="col-xl-6 col-lg-6">
+                  <div class="card rounded-3 shadow-sm h-100">
+                    <div class="card-header py-3 px-4"><h4 class="m-0">Email</h4></div>
+                    <div class="card-body">
+                      {emailNotice && <div class="alert alert-success">{emailNotice}</div>}
+                      {emailError && <div class="alert alert-danger">{emailError}</div>}
+                      <form action="/api/profile/email" method="post">
+                        <label class="lableTitle">Email address</label>
+                        <input type="email" name="email" value={user.email ?? ''} required autocomplete="email" class="form-control mb-3" />
+                        <button type="submit" class="btn btn-primary rounded-pill fw-medium">Update Email</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-xl-6 col-lg-6">
+                  <div class="card rounded-3 shadow-sm h-100">
+                    <div class="card-header py-3 px-4"><h4 class="m-0">Password</h4></div>
+                    <div class="card-body">
+                      {pwNotice && <div class="alert alert-success">{pwNotice}</div>}
+                      {pwError && <div class="alert alert-danger">{pwError}</div>}
+                      <form action="/api/profile/password" method="post">
+                        <label class="lableTitle">New password</label>
+                        <input type="password" name="new_password" minlength="8" required autocomplete="new-password" class="form-control mb-3" />
+                        <label class="lableTitle">Confirm new password</label>
+                        <input type="password" name="confirm_password" minlength="8" required autocomplete="new-password" class="form-control mb-3" />
+                        <button type="submit" class="btn btn-primary rounded-pill fw-medium">Update Password</button>
+                      </form>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- Row End -->
 
-              <!-- Row Start -->
-              <div class="row align-items-start g-4">
-                <div class="col-xl-12 col-lg-12 col-md-12">
-                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo. Develop with <i class="mdi mdi-heart text-danger"></i> by <a href="https://shreethemes.in" target="_blank" class="text-reset">Shreethemes</a>.</p>
+              <div class="card rounded-3 shadow-sm border border-danger-subtle mb-4">
+                <div class="card-header py-3 px-4"><h4 class="m-0 text-danger">Danger zone</h4></div>
+                <div class="card-body">
+                  {delError && <div class="alert alert-danger">{delError}</div>}
+                  <p class="text-muted">Deleting your account is permanent. Your listings, bookings, and reviews will also be removed.</p>
+                  <form action="/api/profile/delete" method="post" onsubmit="return confirm('This cannot be undone. Really delete your account?')">
+                    <label class="lableTitle">Type <code>DELETE</code> to confirm</label>
+                    <input type="text" name="confirm" required pattern="DELETE" class="form-control mb-3" style="max-width: 240px;" />
+                    <button type="submit" class="btn btn-outline-danger rounded-pill fw-medium"><i class="bi bi-trash me-2"></i>Delete my account</button>
+                  </form>
                 </div>
               </div>
 
+              <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo.</p>
             </div>
-
           </div>
         </div>
-
       </div>
     </div>
   </section>
-  <!-- Dashboard End -->
 
-
-  <!-- Components/Home/index/cart.html -->
-  <!-- Components/Home/index/search.html -->
   <SearchOffcanvas />
-
-
-  <!-- Components/Home/index/log.html -->
   <LoginModal />
-
-
   <Footer />
 </Base>
-</content>
-</invoke>
