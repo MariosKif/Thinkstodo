@@ -1,0 +1,353 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import Footer from '../components/nav/Footer.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
+---
+<Base title="My Profile - ThinksToDo">
+  <Navbar headerClass="header header-light head-shadow" />
+
+  <Preloader />
+
+  <!-- Dashboard Start -->
+  <section class="p-0">
+    <div class="container-fluid p-0">
+      <div class="row user-dashboard g-0 pt-lg-0 pt-5">
+
+        <!-- Dashboard Sidebar -->
+        <div class="col-xl-2 col-lg-3 col-md-12">
+          <DashboardSidebar current="my-profile" />
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="col-xl-10 col-lg-9 col-md-12">
+          <div class="user-dashboard-box bg-light">
+
+            <!-- Dashboard Title -->
+            <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
+              <h2 class="fw-medium mb-0">My Profile</h2>
+            </div>
+
+            <!-- Dashboard Details -->
+            <div class="dashCaption p-xl-5 p-3 p-md-4">
+
+              <!-- Row Start -->
+              <div class="row align-items-start g-4 mb-lg-5 mb-4">
+                <div class="col-xl-8 col-lg-8 col-md-7">
+
+                  <!-- User Profile Area -->
+                  <div class="card rounded-3 shadow-sm mb-lg-5 mb-4">
+                    <div class="card-body p-4">
+
+                      <div class="row align-items-start">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+                          <div class="cardTitle d-flex align-items-center justify-content-start mb-3">
+                            <h6 class="fw-semibold">Agent Basic information</h6>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Form -->
+                      <div class="row align-items-start">
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" class="form-control" placeholder="Daniel" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" class="form-control" placeholder="Decuze" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" class="form-control" placeholder="5684526582" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" placeholder="danieldecuze@gmail.com" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12">
+                          <div class="form-group">
+                            <label>Member of</label>
+                            <input type="text" class="form-control" placeholder="Daniel" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12">
+                          <div class="form-group">
+                            <label>About Me</label>
+                            <textarea class="form-control"></textarea>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <!-- Contact Information Wrap -->
+                  <div class="card rounded-3 shadow-sm mb-lg-5 mb-4">
+                    <div class="card-body p-4">
+
+                      <!-- Contact Information Form -->
+                      <div class="row align-items-start">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+                          <div class="cardTitle d-flex align-items-center justify-content-start mb-3">
+                            <h6 class="fw-semibold">Contact Information</h6>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Form -->
+                      <div class="row align-items-start mb-4">
+
+                        <div class="col-xl-12 col-lg-12 col-md-12">
+                          <div class="form-group">
+                            <label>Address 1</label>
+                            <input type="text" class="form-control" placeholder="123 Moobek Marg, Sirathu" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>City</label>
+                            <input type="text" class="form-control" placeholder="Denver" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>State</label>
+                            <input type="tel" class="form-control" placeholder="New York" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" class="form-control" placeholder="United State" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Zip Code</label>
+                            <input type="text" class="form-control" placeholder="HQ4560R" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="text" class="form-control" placeholder="+568452568" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="text" class="form-control" placeholder="-45695824" />
+                          </div>
+                        </div>
+
+                      </div>
+
+                      <!-- Contact Information Form -->
+                      <div class="row align-items-start">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+                          <div class="cardTitle d-flex align-items-center justify-content-start mb-3">
+                            <h6 class="fw-semibold">Social Accounts</h6>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Form -->
+                      <div class="row align-items-start">
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Facebook</label>
+                            <input type="text" class="form-control" placeholder="" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Twitter</label>
+                            <input type="text" class="form-control" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>LinkedIn</label>
+                            <input type="tel" class="form-control" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Dribbble</label>
+                            <input type="text" class="form-control" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Pinterest</label>
+                            <input type="text" class="form-control" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Vimeo URL</label>
+                            <input type="text" class="form-control" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Youtube URL</label>
+                            <input type="text" class="form-control" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Website URL</label>
+                            <input type="text" class="form-control" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12">
+                          <div class="d-flex align-items-center justify-content-start flex-wrap gap-3 mt-3">
+                            <button class="btn btn-primary fw-medium flex-fill" type="button">Update Profile</button>
+                            <button class="btn btn-light-primary fw-medium flex-fill" type="button">Reset Profile</button>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <!-- Contact Information Wrap -->
+                  <div class="card rounded-3 shadow-sm">
+                    <div class="card-body p-4">
+
+                      <!-- Contact Information Form -->
+                      <div class="row align-items-start">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+                          <div class="cardTitle d-flex align-items-center justify-content-start mb-3">
+                            <h6 class="fw-semibold">Update Password</h6>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Form -->
+                      <div class="row align-items-start">
+
+                        <div class="col-xl-12 col-lg-12 col-md-12">
+                          <div class="form-group">
+                            <label>Old Password</label>
+                            <input type="password" class="form-control" placeholder="" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" class="form-control" placeholder="" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                          <div class="form-group">
+                            <label>Confirm Password</label>
+                            <input type="password" class="form-control" placeholder="" />
+                          </div>
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12">
+                          <div class="d-flex align-items-center justify-content-start flex-wrap gap-3 mt-3">
+                            <button class="btn btn-primary fw-medium flex-fill" type="button">Update Password</button>
+                            <button class="btn btn-light-primary fw-medium flex-fill" type="button">Delete Account</button>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="col-xl-4 col-lg-4 col-md-5">
+                  <div class="card rounded-3 shadow-sm">
+                    <div class="card-body py-5 p-4">
+                      <div class="dash-prf-start d-flex flex-column align-items-start justify-content-start">
+                        <div class="dash-prf-start-upper mx-auto">
+                          <div class="dash-prf-start-thumb w-40 h-40 mb-2">
+                            <figure><img src="/assets/img/team-2.jpg" class="img-fluid circle" alt="" /></figure>
+                          </div>
+                        </div>
+                        <div class="dash-prf-start-bottom mx-auto mt-3">
+                          <div class="upload-btn-wrapper small">
+                            <button class="btn btn-md btn-light-primary fw-medium">Change Profile Image</button>
+                            <input type="file" name="myfile" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Row End -->
+
+              <!-- Row Start -->
+              <div class="row align-items-start g-4">
+                <div class="col-xl-12 col-lg-12 col-md-12">
+                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo. Develop with <i class="mdi mdi-heart text-danger"></i> by <a href="https://shreethemes.in" target="_blank" class="text-reset">Shreethemes</a>.</p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <!-- Dashboard End -->
+
+
+  <!-- Components/Home/index/cart.html -->
+  <!-- Components/Home/index/search.html -->
+  <SearchOffcanvas />
+
+
+  <!-- Components/Home/index/log.html -->
+  <LoginModal />
+
+
+  <Footer />
+</Base>
+</content>
+</invoke>

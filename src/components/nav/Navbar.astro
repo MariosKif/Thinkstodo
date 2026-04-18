@@ -1,0 +1,133 @@
+---
+interface Props {
+  /** Full class list for the outer `<div class="header …">`. Defaults to navbar9 ("light + shadow"). */
+  headerClass?: string;
+  /** Path to the brand logo image. Defaults to the standard dark-on-light logo. */
+  logo?: string;
+  /** If true, tag the Add-Listing button with the `light` modifier (used by the dark/transparent variants). */
+  addListingLight?: boolean;
+}
+
+const {
+  headerClass = 'header header-light head-shadow',
+  logo = '/assets/img/logo.svg',
+  addListingLight = false,
+} = Astro.props;
+---
+<!-- Start Navigation -->
+<div class={headerClass} data-sticky-element="">
+  <div class="container-fluid">
+    <nav id="navigation" class="navigation navigation-landscape">
+      <div class="nav-header">
+        <a class="nav-brand" href="/"><img src={logo} class="logo" alt="" /></a>
+        <div class="nav-toggle"></div>
+        <div class="mobile_nav">
+          <ul>
+            <li>
+              <a href="#" class="d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#login"><i class="bi bi-person-circle me-1"></i></a>
+            </li>
+            <li>
+              <a href="#searchSlider" class="d-flex align-items-center" data-bs-toggle="offcanvas" role="button" aria-controls="searchSlider"><i class="bi bi-search me-1"></i></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="nav-menus-wrapper">
+        <ul class="nav-menu">
+          <li class="parent-parent-menu-item"><a href="/" class="home-link">Home</a></li>
+
+          <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">Listings<span class="submenu-indicator"></span></a>
+            <ul class="nav-dropdown nav-submenu">
+              <li><a href="/grid-layout-03/" class="sub-menu-item">Grid Layouts</a></li>
+              <li><a href="/list-layout-04/" class="sub-menu-item">List Layouts</a></li>
+              <li><a href="/half-map-03/" class="sub-menu-item">Half Map Screen</a></li>
+              <li><a href="/single-listing-04/" class="sub-menu-item">Single Listings</a></li>
+            </ul>
+          </li>
+
+          <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">User Dashboard<span class="submenu-indicator"></span></a>
+            <ul class="nav-dropdown nav-submenu">
+              <li><a href="/dashboard-user/" class="sub-menu-item"><i class="bi bi-speedometer me-1"></i>Dashboard Area</a></li>
+              <li><a href="/dashboard-my-profile/" class="sub-menu-item"><i class="bi bi-person-lines-fill me-1"></i>My Profile</a></li>
+              <li><a href="/dashboard-my-bookings/" class="sub-menu-item"><i class="bi bi-journal-check me-1"></i>My Bookings</a></li>
+              <li><a href="/dashboard-my-listings/" class="sub-menu-item"><i class="bi bi-ui-radios-grid me-1"></i>My Listings</a></li>
+              <li><a href="/dashboard-bookmarks/" class="sub-menu-item"><i class="bi bi-bookmark-star me-1"></i>Bookmarkes</a></li>
+              <li><a href="/dashboard-messages/" class="sub-menu-item"><i class="bi bi-chat-dots me-1"></i>Messages</a></li>
+              <li><a href="/dashboard-reviews/" class="sub-menu-item"><i class="bi bi-yelp me-1"></i>Reviews</a></li>
+              <li><a href="/dashboard-wallet/" class="sub-menu-item"><i class="bi bi-wallet me-1"></i>Wallet</a></li>
+              <li><a href="/dashboard-add-listing/" class="sub-menu-item"><i class="bi bi-patch-plus me-1"></i>Add Listing</a></li>
+            </ul>
+          </li>
+
+          <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">Pages<span class="submenu-indicator"></span></a>
+            <ul class="nav-dropdown nav-submenu">
+              <li class="parent-menu-item"><a href="JavaScript:Void(0);"><i class="bi bi-person-circle me-1"></i>My Account<span class="submenu-indicator"></span></a>
+                <ul class="nav-dropdown nav-submenu">
+                  <li><a href="/login/" class="sub-menu-item"><i class="bi bi-box-arrow-in-right me-1"></i>User Login</a></li>
+                  <li><a href="/register/" class="sub-menu-item"><i class="bi bi-person-plus me-1"></i>Signup Page</a></li>
+                  <li><a href="/forgot-password/" class="sub-menu-item"><i class="bi bi-question-circle me-1"></i>Forget Password</a></li>
+                  <li><a href="/two-factor-auth/" class="sub-menu-item"><i class="bi bi-shield-check me-1"></i>Two Step verification</a></li>
+                </ul>
+              </li>
+              <li class="parent-menu-item"><a href="JavaScript:Void(0);"><i class="bi bi-shop me-1"></i>Shop<span class="submenu-indicator"></span></a>
+                <ul class="nav-dropdown nav-submenu">
+                  <li><a href="/checkout-page/" class="sub-menu-item"><i class="bi bi-cart-check me-1"></i>Checkout</a></li>
+                  <li><a href="/invoice-page/" class="sub-menu-item"><i class="bi bi-receipt me-1"></i>Invoice</a></li>
+                  <li><a href="/success-payment/" class="sub-menu-item"><i class="bi bi-credit-card me-1"></i>Success Payment</a></li>
+                </ul>
+              </li>
+              <li><a href="/author-profile/" class="sub-menu-item"><i class="bi bi-person-vcard me-1"></i>Author Profile</a></li>
+              <li><a href="/booking-page/" class="sub-menu-item"><i class="bi bi-calendar2-check me-1"></i>Booking Page</a></li>
+              <li><a href="/about-us/" class="sub-menu-item"><i class="bi bi-person-check me-1"></i>About Us</a></li>
+              <li><a href="/blog/" class="sub-menu-item"><i class="bi bi-blockquote-left me-1"></i>Blog Page</a></li>
+              <li><a href="/blog-detail/" class="sub-menu-item"><i class="bi bi-blockquote-left me-1"></i>Blog Detail</a></li>
+              <li><a href="/contact-us/" class="sub-menu-item"><i class="bi bi-envelope-check me-1"></i>Contact Us</a></li>
+              <li><a href="/pricing/" class="sub-menu-item"><i class="bi bi-coin me-1"></i>Pricing</a></li>
+              <li><a href="/privacy-policy/" class="sub-menu-item"><i class="bi bi-shield-check me-1"></i>Privacy Policy</a></li>
+              <li><a href="/help-center/" class="sub-menu-item"><i class="bi bi-patch-question me-1"></i>Help Center</a></li>
+              <li><a href="/comingsoon/" class="sub-menu-item"><i class="bi bi-hourglass-top me-1"></i>Coming Soon</a></li>
+              <li><a href="/faq/" class="sub-menu-item"><i class="bi bi-info-circle me-1"></i>FAQ's</a></li>
+              <li><a href="/error/" class="sub-menu-item"><i class="bi bi-x-octagon me-1"></i>Error Page</a></li>
+              <li><a href="/elements/" class="sub-menu-item"><i class="bi bi-gear me-1"></i>Elements</a></li>
+            </ul>
+          </li>
+
+          <li><a class="mob-addlisting light" href="JavaScript:Void(0);"><i class="bi bi-geo-alt-fill me-1"></i>Add Listing</a></li>
+        </ul>
+
+        <ul class="nav-menu nav-menu-social align-to-right">
+          <li>
+            <a href="#" class="d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#login"><i class="bi bi-person-circle fs-6 me-1"></i><span class="navCl">SignUp or SignIn</span></a>
+          </li>
+          <li class={`list-buttons${addListingLight ? ' light' : ''}`}>
+            <a href="/register/"><i class="bi bi-geo-alt fs-6 me-1"></i>Add Listing</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</div>
+<!-- End Navigation -->
+
+<script is:inline>
+  (function () {
+    const currentPath = window.location.pathname.replace(/\/$/, '');
+    document.querySelectorAll('.sub-menu-item').forEach((item) => {
+      const itemPath = new URL(item.href).pathname.replace(/\/$/, '');
+      if (itemPath !== currentPath) return;
+      item.classList.add('active');
+      let parentMenu = item.closest('.parent-menu-item');
+      while (parentMenu && !parentMenu.classList.contains('processed')) {
+        const parentLink = parentMenu.querySelector('a');
+        if (parentLink) parentLink.classList.add('active');
+        parentMenu.classList.add('processed');
+        parentMenu = parentMenu.closest('.parent-parent-menu-item');
+      }
+      const topLevelMenu = item.closest('.parent-parent-menu-item');
+      if (topLevelMenu) {
+        const topLevelLink = topLevelMenu.querySelector('.home-link');
+        if (topLevelLink) topLevelLink.classList.add('active');
+      }
+    });
+  })();
+</script>

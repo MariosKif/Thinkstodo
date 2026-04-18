@@ -1,0 +1,267 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import Footer from '../components/nav/Footer.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
+import { reviews2 } from '../lib/data/context';
+---
+<Base title="Reviews - ThinksToDo">
+  <Navbar headerClass="header header-light head-shadow" />
+
+  <Preloader />
+
+  <!-- Dashboard Start -->
+  <section class="p-0">
+    <div class="container-fluid p-0">
+      <div class="row user-dashboard g-0 pt-lg-0 pt-5">
+
+        <!-- Dashboard Sidebar -->
+        <div class="col-xl-2 col-lg-3 col-md-12">
+          <DashboardSidebar current="reviews" />
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="col-xl-10 col-lg-9 col-md-12">
+          <div class="user-dashboard-box bg-light">
+
+            <!-- Dashboard Title -->
+            <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
+              <h2 class="fw-medium mb-0">All Reviews</h2>
+            </div>
+
+            <!-- Dashboard Details -->
+            <div class="dashCaption p-xl-5 p-3 p-md-4">
+
+              <!-- Row Start -->
+              <div class="row align-items-start g-4 mb-lg-5 mb-4">
+                <div class="col-xl-12 col-lg-12 col-md-12">
+                  <div class="card rounded-3 shadow-sm">
+                    <div class="card-header px-4 py-3">
+                      <h4 class="m-0">Reviews</h4>
+                    </div>
+                    <div class="card-body p-0">
+                      <ul class="dashboardListgroup hovereffect">
+
+                        <!-- Components/User-Dashboard/dashboard-reviews/reviews3.html -->
+                        {reviews2.map((item: any) => (
+                          <li>
+                            <div class="singleReviewswrap">
+                              <div class="singlereviews">
+                                <div class="reviewerAvatar">
+                                  <figure class="m-0">
+                                    <img src={item.img} class="img-fluid circle avatar-xl" alt="Avatar" />
+                                  </figure>
+                                </div>
+
+                                <div class="reviewsInfo">
+                                  <div class="reviewssupper d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                                    <div class="reviewsExtopper">
+                                      <div class="reviewrHeadline d-flex align-items-center justify-content-start gap-2">
+                                        <h6 class="messageuserTitle">{item.title}</h6> {item.on} <a href="#" class="fw-medium text-primary">{item.name}</a>
+                                      </div>
+                                      <div class="postedDate"><span class="text-md">{item.date}</span></div>
+                                    </div>
+                                    <div class="flxLast">
+                                      <div class="reviewsStar" data-rating="5">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-half"></i>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="reviewsBody">
+                                    <div class="reviewDescription d-block mb-3">
+                                      <p class="m-0">{item.desc}</p>
+                                    </div>
+                                    <div class="reviewreply">
+                                      <button type="button" class="btn btn-sm fw-medium btn-light-primary rounded-pill"  data-bs-toggle="modal" data-bs-target="#replyModal"><i class="bi bi-reply me-2"></i>Rply to this review</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <!-- Row End -->
+
+              <!-- Row Start -->
+              <div class="row align-items-start g-4">
+                <div class="col-xl-12 col-lg-12 col-md-12">
+                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo. Develop with <i class="mdi mdi-heart text-danger"></i> by <a href="https://shreethemes.in" target="_blank" class="text-reset">Shreethemes</a>.</p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <!-- Dashboard End -->
+
+
+  <!-- Components/Home/index/cart.html -->
+  <!-- Components/User-Dashboard/dashboard-messages/conversion.html -->
+  <!-- Conversion Modal -->
+  <div class="modal fade" id="conversionModal" tabindex="-1" aria-labelledby="conversionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-transparent border-0">
+        <div class="chatboxWraper" id="conversionModalLabel">
+
+          <!-- Chat Header -->
+          <div class="bg-cover chatboxHeader py-5" style="background:url(/assets/img/avatar-bg-2.jpg)no-repeat;" data-overlay="5">
+            <a href="#" data-bs-dismiss="modal" aria-label="Close" class="close"><i class="bi bi-x"></i></a>
+            <div class="chatAvatar"><figure><img src="/assets/img/team-2.jpg" class="img-fluid circle avatar-xl" alt="Chat Avatar" /></figure></div>
+            <div class="chaterInfo">
+              <h6 class="chatterTitle">Michel K. Deve</h6>
+              <p class="subtitle">michelk.deve@gmail.com</p>
+            </div>
+          </div>
+
+          <!-- Chat Body -->
+          <div class="chatboxbody">
+            <div id="chat-messages" class="animate">
+              <label>Tuesday 07</label>
+
+              <div class="message">
+                <img src="/assets/img/team-2.jpg" alt="" />
+                <div class="bubble">
+                  Hi dear Michel!
+                  <div class="corner"></div>
+                  <span>1 min</span>
+                </div>
+              </div>
+
+              <div class="message right">
+                <img src="/assets/img/team-4.jpg" alt="" />
+                <div class="bubble">
+                  Hi, How may i help you?
+                  <div class="corner"></div>
+                  <span>4 min</span>
+                </div>
+              </div>
+
+              <div class="message">
+                <img src="/assets/img/team-2.jpg" alt="" />
+                <div class="bubble">
+                  Can you share your demo link?
+                  <div class="corner"></div>
+                  <span>Now</span>
+                </div>
+              </div>
+
+              <div class="message right">
+                <img src="/assets/img/team-4.jpg" alt="" />
+                <div class="bubble">
+                  Yah! Why not please share yor email.
+                  <div class="corner"></div>
+                  <span>2 min</span>
+                </div>
+              </div>
+
+              <div class="message">
+                <img src="/assets/img/team-2.jpg" alt="" />
+                <div class="bubble">
+                  Yeah, hold on
+                  <div class="corner"></div>
+                  <span>1 min</span>
+                </div>
+              </div>
+
+              <div class="message">
+                <img src="/assets/img/team-2.jpg" alt="" />
+                <div class="bubble">
+                  This is my id "mitchel.warm@gmail.com"
+                  <div class="corner"></div>
+                  <span>1 min</span>
+                </div>
+              </div>
+
+              <div class="message right">
+                <img src="/assets/img/team-4.jpg" alt="" />
+                <div class="bubble">
+                  Ok Dear! We will share soon.
+                  <div class="corner"></div>
+                  <span>now</span>
+                </div>
+              </div>
+
+              <div class="message">
+                <img src="/assets/img/team-2.jpg" alt="" />
+                <div class="bubble">
+                  Thanks a lot!
+                  <div class="corner"></div>
+                  <span>Now</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Chat Footer -->
+          <div class="chatfooter">
+            <div class="chatAdder">
+              <button type="button" id="add"><i class="bi bi-patch-plus-fill"></i></button>
+              <button type="button" id="gif"><i class="bi bi-emoji-laughing"></i></button>
+            </div>
+            <div class="sendmessage">
+              <input type="text" class="form-control" value="Send message..." />
+              <button type="button" id="send"><i class="bi bi-send"></i></button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Components/User-Dashboard/dashboard-reviews/reply.html -->
+  <!-- Reply Modal -->
+  <div class="modal modal-lg fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-light border-0 px-md-5">
+          <h4 class="modal-title fw-medium" id="replyModalLabel">Reply Message</h4>
+          <a href="#" data-bs-dismiss="modal" aria-label="Close" class="square--40 circle bg-light-danger text-danger"><i class="bi bi-x"></i></a>
+        </div>
+        <div class="modal-body p-md-5">
+          <div class="messageForm">
+            <div class="form-group">
+              <textarea class="form-control" placeholder="Type your Message To Dan"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary fw-medium px-md-5">Reply<i class="bi bi-arrow-right ms-2"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Components/Home/index/search.html -->
+  <SearchOffcanvas />
+
+
+  <!-- Components/Home/index/log.html -->
+  <LoginModal />
+
+
+  <Footer />
+</Base>
+</content>
+</invoke>

@@ -1,0 +1,59 @@
+---
+import Base from '../../layouts/Base.astro';
+import Navbar from '../../components/nav/Navbar.astro';
+import Footer from '../../components/nav/Footer.astro';
+import Subscribe from '../../components/shared/Subscribe.astro';
+import LoginModal from '../../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../../components/shared/SearchOffcanvas.astro';
+import Preloader from '../../components/shared/Preloader.astro';
+import { blogs } from '../../lib/data/context';
+
+function slugify(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+---
+<Base title="Blog Detail - ThinksToDo">
+  <Navbar headerClass="header header-light" />
+
+  <Preloader />
+
+  <div class="clearfix"></div>
+
+  <section class="py-5">
+    <div class="container">
+      <div class="row align-items-center justify-content-between mb-4">
+        <div class="col">
+          <h2 class="fw-semibold mb-1">Blog Detail</h2>
+          <p class="text-muted mb-0">Pick an article below to view its details.</p>
+        </div>
+      </div>
+      <div class="row">
+        {blogs.map((blog: any) => (
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card rounded-4 shadow-sm h-100">
+              {blog.img && (
+                <a href={`/blog-detail/${blog.slug || slugify(blog.title)}/`} class="d-block bg-gradient rounded-top">
+                  <img src={blog.img} class="card-img-top" alt={blog.title} />
+                </a>
+              )}
+              <div class="card-body">
+                <h5 class="card-title fw-semibold fs-5 lh-base mb-3">
+                  <a href={`/blog-detail/${blog.slug || slugify(blog.title)}/`}>
+                    {blog.title}
+                  </a>
+                </h5>
+                {blog.desc && <p>{blog.desc}</p>}
+                {blog.date && <p class="card-text text-muted"><small>{blog.date}</small></p>}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Subscribe />
+  <LoginModal />
+  <SearchOffcanvas />
+  <Footer />
+</Base>

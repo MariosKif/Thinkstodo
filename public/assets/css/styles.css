@@ -1,0 +1,86 @@
+.gridGallery-01{
+	position:relative;
+}
+.gridGallery-01 .wrapper {
+    display: grid;
+    grid-gap: 10px;
+	width:100%;
+}
+
+.gridGallery-01 .wrapper .box {
+    background-color:transparent;
+    color: #fff;
+	height:200px;
+    border-radius: 5px;
+	overflow:hidden;
+}
+.gridGallery-01 .wrapper .a {
+    grid-column: 1 / 3;
+    grid-row: 1;
+}
+.gridGallery-01 .wrapper .b {
+    grid-column: 3 ;
+    grid-row: 1 / 3;
+	height:410px;
+}
+.gridGallery-01 .wrapper .c {
+    grid-column: 1 ;
+    grid-row: 2 ;
+}
+.gridGallery-01 .wrapper .d {
+    grid-column: 2;
+    grid-row: 2;
+}
+.gridGallery-01 .wrapper .box .image-cover{
+	position:relative;
+}
+.gridGallery-01 .wrapper .box .hoveroverlay{
+	position:absolute;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	background:#000000;
+	opacity:0.05;
+	transition:all ease 0.4s;
+}	
+ .gridGallery-01 .wrapper .box .hoveroverlay:hover, .gridGallery-01 .wrapper .box .hoveroverlay:focus{
+	opacity:0.4;
+ }	 
+ /* ------------ Gallery 2 ------------*/
+ .gridGallery-02{
+	position:relative;
+}
+.gridGallery-02 .wrapper {
+    display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-gap:10px;
+	width:100%;
+}
+
+.gridGallery-02 .wrapper .box {
+    background-color:transparent;
+    color: #fff;
+	height:300px;
+    border-radius: 5px;
+	overflow:hidden;
+}
+.gridGallery-02 .wrapper .box:nth-of-type(2) {
+	grid-column: 2 / 4;
+}
+.gridGallery-02 .wrapper .box .image-cover{
+	position:relative;
+}
+.gridGallery-02 .wrapper .box .hoveroverlay{
+	position:absolute;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	background:#000000;
+	opacity:0.05;
+	transition:all ease 0.4s;
+}	
+ .gridGallery-02 .wrapper .box .hoveroverlay:hover, .gridGallery-02 .wrapper .box .hoveroverlay:focus{
+	opacity:0.4;
+ }

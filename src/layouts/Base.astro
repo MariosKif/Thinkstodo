@@ -1,0 +1,124 @@
+---
+interface Props {
+  title?: string;
+  htmlClass?: string;
+  bodyClass?: string;
+}
+
+const {
+  title = 'ThinksToDo - Business Directory & Listing Template',
+  htmlClass = '',
+  bodyClass = '',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en" data-bs-theme="" class={htmlClass}>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="ThinksToDo - Business Directory & Listing Template" />
+    <meta name="author" content="Shreethemes" />
+
+    <title>{title}</title>
+    <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />
+
+    <!-- All Plugins -->
+    <link href="/assets/css/animation.css" rel="stylesheet" />
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/assets/css/dropzone.min.css" rel="stylesheet" />
+    <link href="/assets/css/rome.css" rel="stylesheet" />
+    <link href="/assets/css/owl.carousel.min.css" rel="stylesheet" />
+    <link href="/assets/css/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="/assets/css/rangeSlider.min.css" rel="stylesheet" />
+    <link href="/assets/css/select2.min.css" rel="stylesheet" />
+    <link href="/assets/css/magnific-popup.css" rel="stylesheet" />
+    <link href="/assets/css/prism.css" rel="stylesheet" />
+
+    <!-- Icons CSS -->
+    <link href="/assets/css/fontawesome.css" rel="stylesheet" />
+    <link href="/assets/css/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link href="/assets/css/style.css" rel="stylesheet" />
+  </head>
+
+  <body class={bodyClass}>
+
+    <div id="main-wrapper">
+      <main>
+        <slot />
+      </main>
+    </div>
+
+    <!-- Back to top -->
+    <a href="#" class="btn-primary back-to-top" id="back2Top"><i class="bi bi-arrow-up"></i></a>
+
+    <!-- All jQuery + plugins (loaded as classic scripts from the copied theme) -->
+    <script src="/assets/js/jquery.min.js" is:inline></script>
+    <script src="/assets/js/popper.min.js" is:inline></script>
+    <script src="/assets/js/bootstrap.min.js" is:inline></script>
+    <script src="/assets/js/dropzone.min.js" is:inline></script>
+    <script src="https://cdn.jsdelivr.net/npm/waypoints@4.0.1/lib/noframework.waypoints.min.js" is:inline></script>
+    <script src="/assets/js/counterup.min.js" is:inline></script>
+    <script src="/assets/js/rangeslider.js" is:inline></script>
+    <script src="/assets/js/select2.min.js" is:inline></script>
+    <script src="/assets/js/owl.carousel.min.js" is:inline></script>
+    <script src="/assets/js/rome.js" is:inline></script>
+    <script src="/assets/js/jquery.magnific-popup.min.js" is:inline></script>
+    <script src="/assets/js/addadult.js" is:inline></script>
+    <script src="/assets/js/custom.js" is:inline></script>
+
+    <!-- Morris.js charts (dashboard-only; cheap to keep loaded globally) -->
+    <script src="/assets/js/raphael/raphael.min.js" is:inline></script>
+    <script src="/assets/js/morris.js/morris.min.js" is:inline></script>
+    <script src="/assets/js/custom/dashboard.js" is:inline></script>
+
+    <!-- Counter-up animation (null-safe; runs on every page) -->
+    <script is:inline>
+      try {
+        const counters = document.querySelectorAll('.counter-value');
+        const speed = 2500;
+        counters.forEach((counter) => {
+          const updateCount = () => {
+            const target = +counter.getAttribute('data-target');
+            const count = +counter.innerText;
+            let inc = target / speed;
+            if (inc < 1) inc = 1;
+            if (count < target) {
+              counter.innerText = Math.min(count + inc, target).toFixed(0);
+              requestAnimationFrame(updateCount);
+            } else {
+              counter.innerText = target;
+            }
+          };
+          updateCount();
+        });
+      } catch (err) {
+        console.error('Error in counter script:', err);
+      }
+    </script>
+
+    <!-- Back-to-top scroll handler (null-safe) -->
+    <script is:inline>
+      window.onscroll = function () { scrollFunction(); };
+      function scrollFunction() {
+        const mybutton = document.getElementById('back-to-top');
+        if (mybutton !== null) {
+          if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
+            mybutton.classList.add('block');
+            mybutton.classList.remove('hidden');
+          } else {
+            mybutton.classList.add('hidden');
+            mybutton.classList.remove('block');
+          }
+        }
+      }
+      function topFunction() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+      }
+    </script>
+  </body>
+</html>

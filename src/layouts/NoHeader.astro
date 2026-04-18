@@ -1,0 +1,57 @@
+---
+interface Props {
+  title?: string;
+  htmlClass?: string;
+  bodyClass?: string;
+}
+
+const {
+  title = 'ThinksToDo - Business Directory & Listing Template',
+  htmlClass = '',
+  bodyClass = '',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en" class={htmlClass}>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="ThinksToDo - Business Directory & Listing Template" />
+    <meta name="author" content="Shreethemes" />
+    <title>{title}</title>
+    <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />
+    <link href="/assets/css/animation.css" rel="stylesheet" />
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/assets/css/dropzone.min.css" rel="stylesheet" />
+    <link href="/assets/css/rome.css" rel="stylesheet" />
+    <link href="/assets/css/owl.carousel.min.css" rel="stylesheet" />
+    <link href="/assets/css/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="/assets/css/rangeSlider.min.css" rel="stylesheet" />
+    <link href="/assets/css/select2.min.css" rel="stylesheet" />
+    <link href="/assets/css/magnific-popup.css" rel="stylesheet" />
+    <link href="/assets/css/prism.css" rel="stylesheet" />
+    <link href="/assets/css/fontawesome.css" rel="stylesheet" />
+    <link href="/assets/css/bootstrap-icons.css" rel="stylesheet" />
+    <link href="/assets/css/style.css" rel="stylesheet" />
+  </head>
+  <body class={bodyClass}>
+    <div id="main-wrapper">
+      <main>
+        <slot />
+      </main>
+    </div>
+
+    <script src="/assets/js/jquery.min.js" is:inline></script>
+    <script src="/assets/js/popper.min.js" is:inline></script>
+    <script src="/assets/js/bootstrap.min.js" is:inline></script>
+    <script src="/assets/js/dropzone.min.js" is:inline></script>
+    <script src="/assets/js/counterup.min.js" is:inline></script>
+    <script src="/assets/js/rangeslider.js" is:inline></script>
+    <script src="/assets/js/select2.min.js" is:inline></script>
+    <script src="/assets/js/owl.carousel.min.js" is:inline></script>
+    <script src="/assets/js/rome.js" is:inline></script>
+    <script src="/assets/js/jquery.magnific-popup.min.js" is:inline></script>
+    <script src="/assets/js/custom.js" is:inline></script>
+  </body>
+</html>

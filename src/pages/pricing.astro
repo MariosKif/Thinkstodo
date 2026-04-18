@@ -1,0 +1,196 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import Footer from '../components/nav/Footer.astro';
+import Subscribe from '../components/shared/Subscribe.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+---
+<Base title="Pricing - ThinksToDo">
+  <Navbar headerClass="header header-light head-shadow" />
+
+<Preloader />
+
+<div class="clearfix"></div>
+
+<!-- Page Title Start -->
+<section class="bg-light">
+	<div class="container">
+
+		<!-- Search Form -->
+		<div class="row justify-content-start align-items-center pt-lg-0 pt-5">
+			<div class="col-xl-7 col-lg-9 col-md-12 col-sm-12">
+				<div class="position-relative">
+					<h1 class="xl-heading">Pricing Page</h1>
+					<nav id="breadcrumbs" class="breadcrumbs">
+						<ul>
+							<li><a href="/">Home</a></li>
+							<li><a href="#">Pages</a></li>
+							<li>Pricing</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+		<!-- </row> -->
+
+	</div>
+</section>
+<!-- Page Title End -->
+
+<!-- Price Table Start -->
+<section>
+	<div class="container">
+
+		<div class="row align-items-center justify-content-center">
+			<div class="col-xl-7 col-lg-8 col-md-11 col-sm-12">
+				<div class="secHeading-wrap text-center mb-5">
+					<h2 class="fw-semibold">Choose your Package</h2>
+					<p>Showcase the finest features of your properties with the List Category shortcode. Utilize this tool to display specific property categories, types, cities, and areas of your choice.</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="row align-items-center justify-content-between g-xl-4 g-3">
+
+			<!-- Components/Home/home-5/package.html -->
+			<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+			    <div class="card pricingbox border rounded-4">
+			        <div class="card-body">
+			            <div class="priceHeads">
+			                <div class="priceIcons d-flex align-items-center">
+			                    <div class="fs-1 text-primary"><i class="bi bi-suit-heart lh-0"></i></div>
+			                </div>
+			                <div class="priceTypes d-flex align-items-center mb-3">
+			                    <span class="badge badge-xs badge-primary rounded-pill">Basic Account</span>
+			                </div>
+			            </div>
+			            <div class="priceInfo">
+			                <div class="priceCurrency"><h2>$19<sub class="text-muted fs-6 fw-semibold">\montly</sub></h2></div>
+			                <div class="priceParagraph">
+			                    <p>A free account grants you access to exclusive free components. Sign up and start copying exclusive freebies.</p>
+			                </div>
+			            </div>
+			            <div class="PriceDetails border-top py-4">
+			                <div class="w-100 listItems">
+			                    <ul class="d-flex flex-column text-dark gap-3 p-0">
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>2 Listings</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>30 Days Availability</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-danger text-danger"><i class="bi bi-x"></i></span>Featured Option</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-danger text-danger"><i class="bi bi-x"></i></span>Full Owner Access</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>Full Support</li>
+			                    </ul>
+			                </div>
+			            </div>
+			            <div class="PriceLinks">
+			                <div class="linkingButton">
+			                    <button type="button" class="btn btn-light-primary rounded-pill fw-medium w-100">Get Subscription</button>
+			                </div>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+
+			<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+			    <div class="card pricingbox border border-primary rounded-4">
+			        <div class="card-body">
+			            <div class="priceHeads">
+			                <div class="priceIcons d-flex align-items-center">
+			                    <div class="fs-1 text-primary"><i class="bi bi-gem lh-0"></i></div>
+			                </div>
+			                <div class="priceTypes d-flex align-items-center mb-3">
+			                    <span class="badge badge-xs badge-success rounded-pill">Business Account</span>
+			                </div>
+			            </div>
+			            <div class="priceInfo">
+			                <div class="priceCurrency"><h2 class="text-primary">$29<sub class="text-muted fs-6 fw-semibold">\montly</sub></h2></div>
+			                <div class="priceParagraph">
+			                    <p>A free account grants you access to exclusive free components. Sign up and start copying exclusive freebies.</p>
+			                </div>
+			            </div>
+			            <div class="PriceDetails border-top py-4">
+			                <div class="w-100 listItems">
+			                    <ul class="d-flex flex-column gap-3 p-0">
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>10 Listings</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>90 Days Availability</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>Featured Option</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-danger text-danger"><i class="bi bi-x"></i></span>Full Owner Access</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>Full Support</li>
+			                    </ul>
+			                </div>
+			            </div>
+			            <div class="PriceLinks">
+			                <div class="linkingButton">
+			                    <button type="button" class="btn btn-primary rounded-pill fw-medium w-100">Get Subscription</button>
+			                </div>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+
+			<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+			    <div class="card pricingbox border rounded-4">
+			        <div class="card-body">
+			            <div class="priceHeads">
+			                <div class="priceIcons d-flex align-items-center">
+			                    <div class="fs-1 text-primary"><i class="bi bi-cup-hot lh-0"></i></div>
+			                </div>
+			                <div class="priceTypes d-flex align-items-center mb-3">
+			                    <span class="badge badge-xs badge-primary rounded-pill">Commercial Account</span>
+			                </div>
+			            </div>
+			            <div class="priceInfo">
+			                <div class="priceCurrency"><h2>$79<sub class="text-muted fs-6 fw-semibold">\montly</sub></h2></div>
+			                <div class="priceParagraph">
+			                    <p>A free account grants you access to exclusive free components. Sign up and start copying exclusive freebies.</p>
+			                </div>
+			            </div>
+			            <div class="PriceDetails border-top py-4">
+			                <div class="w-100 listItems">
+			                    <ul class="d-flex flex-column text-dark gap-3 p-0">
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>Unlimited Listings</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>Lifetime Availability</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>Featured Option</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>Full Owner Access</li>
+			                        <li class="d-flex align-items-center gap-2"><span class="square--25 circle bg-light-success text-success"><i class="bi bi-check"></i></span>Full Support</li>
+			                    </ul>
+			                </div>
+			            </div>
+			            <div class="PriceLinks">
+			                <div class="linkingButton">
+			                    <button type="button" class="btn btn-light-primary rounded-pill fw-medium w-100">Get Subscription</button>
+			                </div>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+
+		</div>
+
+	</div>
+</section>
+<!-- Price Table End -->
+
+<!-- Call To Action Start -->
+<section class="bg-cover bg-primary-2 position-relative py-5" style="background:url(/assets/img/brand-section.png)no-repeat;">
+	<div class="container">
+
+		<!-- Components/Home/index/subscribe.html -->
+		<Subscribe />
+
+	</div>
+</section>
+<!-- Call To Action Start -->
+
+	<!-- Components/Home/index/log.html -->
+	<LoginModal />
+
+
+	<!-- Components/Home/index/cart.html -->
+	<!-- Components/Home/index/search.html -->
+	<SearchOffcanvas />
+
+
+	<Footer />
+</Base>

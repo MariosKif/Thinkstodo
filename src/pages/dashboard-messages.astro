@@ -1,0 +1,235 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import Footer from '../components/nav/Footer.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
+import { messages2 } from '../lib/data/context';
+---
+<Base title="Messages - ThinksToDo">
+  <Navbar headerClass="header header-light head-shadow" />
+
+  <Preloader />
+
+  <!-- Dashboard Start -->
+  <section class="p-0">
+    <div class="container-fluid p-0">
+      <div class="row user-dashboard g-0 pt-lg-0 pt-5">
+
+        <!-- Dashboard Sidebar -->
+        <div class="col-xl-2 col-lg-3 col-md-12">
+          <DashboardSidebar current="messages" />
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="col-xl-10 col-lg-9 col-md-12">
+          <div class="user-dashboard-box bg-light">
+
+            <!-- Dashboard Title -->
+            <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
+              <h2 class="fw-medium mb-0">Messages</h2>
+            </div>
+
+            <!-- Dashboard Details -->
+            <div class="dashCaption p-xl-5 p-3 p-md-4">
+
+              <!-- Row Start -->
+              <div class="row align-items-start g-4 mb-lg-5 mb-4">
+                <div class="col-xl-12 col-lg-12 col-md-12">
+                  <div class="card rounded-3 shadow-sm">
+                    <div class="card-header px-4 py-3">
+                      <h4 class="m-0">All Messages</h4>
+                    </div>
+                    <div class="card-body p-0">
+                      <ul class="dashboardListgroup nospace">
+
+                        <!-- Components/User-Dashboard/dashboard-messages/messages2.html -->
+                        {messages2.map((item: any) => (
+                          <li>
+                            <a href="#" class={`singleMessageswrap ${item.class}`} data-bs-toggle="modal" data-bs-target="#conversionModal">
+                              <div class="singleMessages">
+                                <div class="messagesAvatar">
+                                  <figure class="m-0">
+                                    <img src={item.img} class="img-fluid circle avatar-xl" alt="Avatar" />
+                                    <span class={`userStatus ${item.style}`}></span>
+                                  </figure>
+                                </div>
+
+                                <div class="messagesInfo">
+                                  <div class="messagesupper d-flex align-items-center justify-content-between gap-2 mb-1">
+                                    <div class="messagesupper d-flex align-items-center justify-content-start gap-2">
+                                      <h6 class="messageuserTitle">{item.title}</h6>
+
+                                      {item.tag === 'true' && (
+                                        <span class="unread">{item.name}</span>
+                                      )}
+
+                                    </div>
+                                    <div class="flxLast"><span class="text-md text-muted">{item.time}</span></div>
+                                  </div>
+                                  <div class="messagesBody">
+                                    <p class="m-0">{item.desc} <strong>{item.desc1}</strong> {item.desc2}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </a>
+                          </li>
+                        ))}
+
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <!-- Row End -->
+
+              <!-- Row Start -->
+              <div class="row align-items-start g-4">
+                <div class="col-xl-12 col-lg-12 col-md-12">
+                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo. Develop with <i class="mdi mdi-heart text-danger"></i> by <a href="https://shreethemes.in" target="_blank" class="text-reset">Shreethemes</a>.</p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <!-- Dashboard End -->
+
+
+  <!-- Components/Home/index/cart.html -->
+  <!-- Components/User-Dashboard/dashboard-messages/conversion.html -->
+  <!-- Conversion Modal -->
+  <div class="modal fade" id="conversionModal" tabindex="-1" aria-labelledby="conversionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-transparent border-0">
+        <div class="chatboxWraper" id="conversionModalLabel">
+
+          <!-- Chat Header -->
+          <div class="bg-cover chatboxHeader py-5" style="background:url(/assets/img/avatar-bg-2.jpg)no-repeat;" data-overlay="5">
+            <a href="#" data-bs-dismiss="modal" aria-label="Close" class="close"><i class="bi bi-x"></i></a>
+            <div class="chatAvatar"><figure><img src="/assets/img/team-2.jpg" class="img-fluid circle avatar-xl" alt="Chat Avatar" /></figure></div>
+            <div class="chaterInfo">
+              <h6 class="chatterTitle">Michel K. Deve</h6>
+              <p class="subtitle">michelk.deve@gmail.com</p>
+            </div>
+          </div>
+
+          <!-- Chat Body -->
+          <div class="chatboxbody">
+            <div id="chat-messages" class="animate">
+              <label>Tuesday 07</label>
+
+              <div class="message">
+                <img src="/assets/img/team-2.jpg" alt="" />
+                <div class="bubble">
+                  Hi dear Michel!
+                  <div class="corner"></div>
+                  <span>1 min</span>
+                </div>
+              </div>
+
+              <div class="message right">
+                <img src="/assets/img/team-4.jpg" alt="" />
+                <div class="bubble">
+                  Hi, How may i help you?
+                  <div class="corner"></div>
+                  <span>4 min</span>
+                </div>
+              </div>
+
+              <div class="message">
+                <img src="/assets/img/team-2.jpg" alt="" />
+                <div class="bubble">
+                  Can you share your demo link?
+                  <div class="corner"></div>
+                  <span>Now</span>
+                </div>
+              </div>
+
+              <div class="message right">
+                <img src="/assets/img/team-4.jpg" alt="" />
+                <div class="bubble">
+                  Yah! Why not please share yor email.
+                  <div class="corner"></div>
+                  <span>2 min</span>
+                </div>
+              </div>
+
+              <div class="message">
+                <img src="/assets/img/team-2.jpg" alt="" />
+                <div class="bubble">
+                  Yeah, hold on
+                  <div class="corner"></div>
+                  <span>1 min</span>
+                </div>
+              </div>
+
+              <div class="message">
+                <img src="/assets/img/team-2.jpg" alt="" />
+                <div class="bubble">
+                  This is my id "mitchel.warm@gmail.com"
+                  <div class="corner"></div>
+                  <span>1 min</span>
+                </div>
+              </div>
+
+              <div class="message right">
+                <img src="/assets/img/team-4.jpg" alt="" />
+                <div class="bubble">
+                  Ok Dear! We will share soon.
+                  <div class="corner"></div>
+                  <span>now</span>
+                </div>
+              </div>
+
+              <div class="message">
+                <img src="/assets/img/team-2.jpg" alt="" />
+                <div class="bubble">
+                  Thanks a lot!
+                  <div class="corner"></div>
+                  <span>Now</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Chat Footer -->
+          <div class="chatfooter">
+            <div class="chatAdder">
+              <button type="button" id="add"><i class="bi bi-patch-plus-fill"></i></button>
+              <button type="button" id="gif"><i class="bi bi-emoji-laughing"></i></button>
+            </div>
+            <div class="sendmessage">
+              <input type="text" class="form-control" value="Send message..." />
+              <button type="button" id="send"><i class="bi bi-send"></i></button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Components/Home/index/search.html -->
+  <SearchOffcanvas />
+
+
+  <!-- Components/Home/index/log.html -->
+  <LoginModal />
+
+
+  <Footer />
+</Base>
+</content>
+</invoke>

@@ -1,0 +1,653 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import Footer from '../components/nav/Footer.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+import { slistings, listings7 } from '../lib/data/context';
+
+function slugify(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+---
+<Base title="Half Map Screen - ThinksToDo">
+  <Navbar headerClass="header header-transparent navdark" logo="/assets/img/logo-light.svg" />
+
+<Preloader />
+
+<div class="clearfix"></div>
+
+<!-- Search Listing Start -->
+<div class="map-banner-wrap half-map">
+
+	<div class="map-left-box">
+		<div class="map-home flt-wrap pt-lg-0 pt-5">
+			<div class="home-map-container fw-map">
+				<!-- Leaflet island coming in Plan 3 -->
+				<div id="map" class="halfMap"></div>
+				<div id="map-main"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="map-content-wrap">
+		<div class="map-content-bxo py-5 border-bottom">
+
+			<!-- Single Filter For Property -->
+			<div class="filterOption-02 mb-3">
+
+				<!-- Components/Listings/Half-Map-Screen/half-map-01/single-filter.html -->
+				<form action="/half-map-03/" method="get" class="row align-items-start justify-content-center g-3">
+				    <div class="col-xl-5 col-lg-5 col-md-5">
+				        <div class="form-group position-relative mb-0">
+				            <input type="search" name="q" class="form-control fw-medium ps-5" placeholder="What you are looking for?">
+				            <span class="position-absolute top-50 start-0 translate-middle text-muted ms-4"><i class="bi bi-search opacity-75"></i></span>
+				        </div>
+				    </div>
+				    <div class="col-xl-5 col-lg-5 col-md-5">
+				        <div class="form-group position-relative mb-0">
+				            <input type="search" name="location" class="form-control fw-medium ps-5" placeholder="Type location">
+				            <span class="position-absolute top-50 start-0 translate-middle text-muted ms-4"><i class="bi bi-crosshair2 opacity-75"></i></span>
+				        </div>
+				    </div>
+				    <div class="col-xl-2 col-lg-2 col-md-2">
+				        <button type="submit" class="btn btn-primary w-100 fw-medium"><i class="bi bi-search me-1"></i>Search</button>
+				    </div>
+				    <div class="col-xl-12 col-lg-12 col-md-12">
+				        <div class="form-group position-relative mb-0">
+				            <input type="text" name="date" class="form-control fw-medium" id="input" placeholder="Choose A Date">
+				        </div>
+				    </div>
+				</form>
+
+			</div>
+
+			<!-- Single Filter Wraps -->
+			<div class="filterOptions-wrap d-flex justify-content-between align-items-center gap-2">
+
+				<div class="filter-mobile d-lg-none flex-fill">
+					<a href="#filterSlider" data-bs-toggle="offcanvas" data-bs-target="#filterSlider" aria-controls="filterSlider" class="btn btn-md btn-light-primary full-width"><i class="bi bi-funnel me-2"></i>Filter Option</a>
+				</div>
+
+				<!-- Components/Listings/Half-Map-Screen/half-map-01/filter2.html -->
+				<div class="filter-desktop d-none d-lg-block">
+				    <!-- Rating Filter -->
+				    <div class="dropdown d-inline-flex p-0">
+				        <a href="#" class="py-2 px-3 dropdown-toggle toogleDrops" id="catsfilter" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+				            Categories
+				        </a>
+				        <div class="dropdown-menu border shadow-sm">
+				            <div class="card rounded-3">
+				                <div class="card-body p-4">
+				                    <div class="row align-items-start gy-2">
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="eatdrink1">
+				                              <label class="form-check-label" for="eatdrink1">Eat & Drink</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="apartments1">
+				                              <label class="form-check-label" for="apartments1">Apartments</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="classifieds1">
+				                              <label class="form-check-label" for="classifieds1">Classified</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="services1">
+				                              <label class="form-check-label" for="services1">Services</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="gymfitness1">
+				                              <label class="form-check-label" for="gymfitness1">Gym & Fitness</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="nightlife1">
+				                              <label class="form-check-label" for="nightlife1">Night Life</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="coachings1">
+				                              <label class="form-check-label" for="coachings1">Coaching</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="shoppings1">
+				                              <label class="form-check-label" for="shoppings1">Shopping</label>
+				                            </div>
+				                        </div>
+
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+
+				    <!-- Rating Filter -->
+				    <div class="dropdown d-inline-flex p-0">
+				        <a href="#" class="py-2 px-3 dropdown-toggle toogleDrops" id="ratingsfilter" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+				            Rating Filter
+				        </a>
+				        <div class="dropdown-menu border shadow-sm">
+				            <div class="card rounded-3">
+				                <div class="card-body p-4">
+				                    <div class="filterButton">
+
+				                        <div class="filterFlex">
+				                            <input type="radio" class="btn-check" name="ratingsfilters" id="all" checked>
+				                            <label class="btn" for="all"><i class="bi bi-star-fill me-2"></i>All</label>
+				                        </div>
+
+				                        <div class="filterFlex">
+				                            <input type="radio" class="btn-check" name="ratingsfilters" id="threeplus">
+				                            <label class="btn" for="threeplus"><i class="bi bi-star-fill me-2"></i>3.0+</label>
+				                        </div>
+
+				                        <div class="filterFlex">
+				                            <input type="radio" class="btn-check" name="ratingsfilters" id="fourplus">
+				                            <label class="btn" for="fourplus"><i class="bi bi-star-fill me-2"></i>4.0+</label>
+				                        </div>
+
+				                        <div class="filterFlex">
+				                            <input type="radio" class="btn-check" name="ratingsfilters" id="fourhalf">
+				                            <label class="btn" for="fourhalf"><i class="bi bi-star-fill me-2"></i>4.5+</label>
+				                        </div>
+
+				                        <div class="filterFlex">
+				                            <input type="radio" class="btn-check" name="ratingsfilters" id="fiveplus">
+				                            <label class="btn" for="fiveplus"><i class="bi bi-star-fill me-2"></i>5.0</label>
+				                        </div>
+
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+
+				    <!-- Price Filter -->
+				    <div class="dropdown d-inline-flex p-0">
+				        <a href="#" class="py-2 px-3 dropdown-toggle toogleDrops" id="pricefilter" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+				            Price Filter
+				        </a>
+				        <div class="dropdown-menu pt-2 border-0 shadow-sm">
+				            <div class="card rounded-3">
+				                <div class="card-body">
+				                    <p class="fw-medium">Price Range in $ USD</p>
+				                    <div class="searchBar-single-wrap mt-2">
+				                        <input type="text" class="pricefilter" name="my_range" value="" data-skin="round"
+				                            data-type="double" data-grid="false">
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+
+				    <!-- Distance -->
+				    <div class="dropdown d-inline-flex p-0">
+				        <a href="#" class="py-2 px-3 dropdown-toggle toogleDrops" id="distancefilter" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+				            Distance
+				        </a>
+				        <div class="dropdown-menu pt-2 border-0 shadow-sm">
+				            <div class="card rounded-3">
+				                <div class="card-body">
+				                    <p class="fw-medium">Distance Filter Show in Km</p>
+				                    <div class="searchBar-single-wrap mt-2">
+				                        <input type="text" class="distancefilter" name="my_range" value="" data-skin="round"
+				                            data-type="single" data-grid="false">
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+
+				    <!-- More Filter -->
+				    <div class="dropdown d-inline-flex p-0">
+				        <a href="#" class="py-2 px-3 dropdown-toggle toogleDrops" id="morefilter" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+				            More Filter
+				        </a>
+				        <div class="dropdown-menu pt-2 border-0 shadow-sm">
+				            <div class="card rounded-3">
+				                <div class="card-body p-4">
+				                    <div class="row align-items-start gy-2">
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="goods1">
+				                              <label class="form-check-label" for="goods1">Good for Kids</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="dogs1">
+				                              <label class="form-check-label" for="dogs1">Dogs Allowed</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="seatings1">
+				                              <label class="form-check-label" for="seatings1">Outdoor Seating</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="alcohal1">
+				                              <label class="form-check-label" for="alcohal1">Alcohol</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="breakfast1">
+				                              <label class="form-check-label" for="breakfast1">Breakfast</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="books1">
+				                              <label class="form-check-label" for="books1">Instant Book</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="smokings1">
+				                              <label class="form-check-label" for="smokings1">Smoking Allowed</label>
+				                            </div>
+				                        </div>
+
+				                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
+				                            <div class="form-check form-check-inline">
+				                              <input class="form-check-input" type="checkbox" id="wifi1">
+				                              <label class="form-check-label" for="wifi1">Free WiFi</label>
+				                            </div>
+				                        </div>
+
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+
+			</div>
+
+		</div>
+
+		<!--- All List -->
+		<div class="map-content-list py-4">
+
+			<div class="row align-items-center justify-content-between mb-4">
+				<div class="col-xl- 5 col-lg-5 col-md-5 col-sm-6 col-6">
+					<div class="totalListingshow">
+						<h6 class="fw-medium mb-0">106 Listings Founds</h6>
+					</div>
+				</div>
+
+				<div class="col-xl- 5 col-lg-5 col-md-5 col-sm-6 col-6">
+					<div class="text-end">
+						<!-- Rating Filter -->
+						<div class="dropdown d-inline-flex p-0">
+							<a href="#" class="py-2 px-3 dropdown-toggle toogleDrops bg-white" id="shortfilter" data-bs-toggle="dropdown" aria-expanded="false">
+								Short Listings
+							</a>
+							<div class="dropdown-menu border shadow-sm">
+								<ul class="card rounded-0 p-0">
+
+									<!-- Components/Listings/Grid-Layouts/grid-layout-01/short-listings.html -->
+									{slistings.map((item) => (
+									<li><a class={`${item.class} dropdown-item`} href="#">{item.title}</a></li>
+									))}
+
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- All Listing Lits -->
+			<div class="row align-items-center justify-content-center g-xl-4 g-3">
+
+				<!-- Components/Listings/Half-Map-Screen/half-map-03/listings13.html -->
+				{listings7.map((item) => (
+				<div class="col-xl-6 col-lg-12 col-md-6 col-sm-12 col-12">
+				    <div class="listingitem-container">
+				        <div class="singlelisting-item">
+				            <div class="listing-top-item">
+				                <a href="#" class="topLink">
+				                    <div class="position-absolute start-0 top-0 ms-3 mt-3 z-2">
+				                        <div class="d-flex align-items-center justify-content-start gap-2">
+				                            <span class={`badge badge-xs text-uppercase ${item.color}`}>{item.btn}</span>
+				                            <span class="badge badge-xs badge-transparent">{item.dollar}</span>
+
+				                            {item.tag === 'true' && (
+				                                <span class="badge badge-xs badge-transparent"><i class="bi bi-star mb-0 me-1"></i>{item.btn1}</span>
+				                            )}
+
+				                        </div>
+				                    </div>
+				                    <img src={item.img} class="img-fluid" alt="Listing Image">
+				                </a>
+				                <div class="position-absolute end-0 bottom-0 me-3 mb-3 z-2">
+				                    <a href="#" class="bookmarkList" data-bs-toggle="tooltip" data-bs-title="Save Listing"><i class="bi bi-suit-heart m-0"></i></a>
+				                </div>
+				            </div>
+				            <div class="listing-middle-item">
+				                <div class="listing-avatar">
+				                    <a href="#" class="avatarImg"><img src={item.img1} class="img-fluid circle" alt="Avatar"></a>
+				                </div>
+				                <div class="listing-details">
+				                    <h4 class="listingTitle"><a href={`/single-listing-04/${slugify(item.title)}/`} class="titleLink">{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h4>
+				                    <p>{item.desc}</p>
+				                </div>
+				                <div class="listing-info-details">
+				                    <div class="d-flex align-items-center justify-content-start gap-4">
+				                        <div class="list-calls"><i class="bi bi-telephone mb-0 me-2"></i>{item.number}</div>
+				                        <div class="list-location"><i class="bi bi-geo-alt mb-0 me-2"></i>{item.location}</div>
+				                    </div>
+				                </div>
+				            </div>
+				            <div class="listing-footer-item">
+				                <div class="d-flex align-items-center justify-content-between gap-2">
+				                    <div class="catdWraps">
+				                        <div class="flex-start">
+				                            <a href="#" class="d-flex align-items-center justify-content-start gap-2">
+				                                <span class={item.span}><i class={item.icon}></i></span>
+				                                <span class="catTitle">{item.name}</span>
+				                            </a>
+				                        </div>
+				                        <div class="flex-end"><span class="moreCatcounter">{item.plus}</span></div>
+				                    </div>
+				                    <div class="listing-shares">
+				                        <div class="d-flex align-items-center justify-content-start gap-2">
+				                            <a href="#" class="smallLinks" data-bs-toggle="tooltip" data-bs-title="View Listing"><i class="bi bi-eye-fill m-0"></i></a>
+				                            <a href="#" class="smallLinks" data-bs-toggle="tooltip" data-bs-title="Save Listing"><i class="bi bi-suit-heart m-0"></i></a>
+				                            <a href="#" class="smallLinks" data-bs-toggle="tooltip" data-bs-title="Share Listing"><i class="bi bi-share-fill m-0"></i></a>
+				                        </div>
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+				))}
+
+			</div>
+
+			<!-- Components/Listings/Half-Map-Screen/half-map-01/pagination2.html -->
+			<!-- Pagination -->
+			<div class="row align-items-center justify-content-center my-5">
+			    <div class="col-lg-12 col-md-12 col-sm-12">
+			        <nav aria-label="Page navigation example">
+			          <ul class="pagination justify-content-center">
+			            <li class="page-item">
+			              <a class="page-link"><i class="fa-solid fa-arrow-left"></i></a>
+			            </li>
+			            <li class="page-item"><a class="page-link" href="#">1</a></li>
+			            <li class="page-item active"><a class="page-link" href="#">2</a></li>
+			            <li class="page-item"><a class="page-link" href="#">3</a></li>
+			            <li class="page-item"><a class="page-link" href="#">4</a></li>
+			            <li class="page-item"><a class="page-link" href="#">5</a></li>
+			            <li class="page-item">
+			              <a class="page-link" href="#"><i class="fa-solid fa-arrow-right"></i></a>
+			            </li>
+			          </ul>
+			        </nav>
+			    </div>
+			</div>
+
+
+			<!-- Components/Listings/Half-Map-Screen/half-map-01/foot-up.html -->
+			<!-- Pagination -->
+			<div class="row align-items-center justify-content-center mt-5">
+			    <div class="col-lg-12 col-md-12 col-sm-12">
+			        <div class="copyrightbox text-center"><p class="text-muted m-0">© <script>document.write(String(new Date().getFullYear()))</script> ThinksToDo. Develop with <i class="mdi mdi-heart text-danger"></i> by <a href="https://shreethemes.in" target="_blank" class="text-reset">Shreethemes</a>.</p>
+			    </div>
+			</div>
+
+
+		</div>
+	</div>
+
+</div>
+<div class="clearfix"></div>
+<!-- Search Listing End -->
+
+
+	<!-- Components/Home/index/log.html -->
+	<LoginModal />
+
+
+	<!-- Components/Home/index/cart.html -->
+	<!-- Components/Home/index/search.html -->
+	<SearchOffcanvas />
+
+
+	<!-- Components/Listings/Grid-Layouts/grid-layout-02/offcanvas.html -->
+	<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="filterSlider" aria-labelledby="filterSliderLabel">
+	    <div class="offcanvas-header border-bottom py-3">
+	        <h3 class="h5">Filters</h3>
+	        <button type="button" class="btn-close text-sm d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#filterSidebar" aria-label="Close"></button>
+	    </div>
+	    <div class="offcanvas-body overflow-x-hidden p-4 p-lg-0" id="filterSliderLabel">
+
+	        <!-- Options -->
+	        <div class="searchInner">
+
+	            <div class="search-inner">
+
+	                <div class="filter-search-box mb-4">
+	                    <div class="form-group">
+	                        <input type="text" class="form-control" placeholder="Search listing..">
+	                    </div>
+	                </div>
+
+	                <div class="prtsTypes mb-4">
+	                    <div class="filterButton">
+
+	                        <div class="filterFlex">
+	                            <input type="radio" class="btn-check" name="ratingsfilter" id="alls" checked>
+	                            <label class="btn" for="alls"><i class="bi bi-star-fill me-1"></i>All</label>
+	                        </div>
+
+	                        <div class="filterFlex">
+	                            <input type="radio" class="btn-check" name="ratingsfilter" id="threepluss">
+	                            <label class="btn" for="threepluss"><i class="bi bi-star-fill me-1"></i>3.0+</label>
+	                        </div>
+
+	                        <div class="filterFlex">
+	                            <input type="radio" class="btn-check" name="ratingsfilter" id="fourpluss">
+	                            <label class="btn" for="fourpluss"><i class="bi bi-star-fill me-1"></i>4.0+</label>
+	                        </div>
+
+	                        <div class="filterFlex">
+	                            <input type="radio" class="btn-check" name="ratingsfilter" id="fivepluss">
+	                            <label class="btn" for="fivepluss"><i class="bi bi-star-fill me-1"></i>5.0</label>
+	                        </div>
+
+	                    </div>
+	                </div>
+
+	                <!-- Categories -->
+	                <div class="filter-search-box mb-4">
+	                    <div class="filtersearch-title"><h6 class="mb-2 lh-base text-sm text-uppercase fw-medium">Categories</h6></div>
+	                    <div class="row align-items-center justify-content-between gy-2">
+	                        <div class="col-xl-12 col-lg-12 col-md-12">
+	                            <div class="d-flex align-items-center justify-content-center flex-wrap gap-2 mb-3">
+
+	                                <!-- Item -->
+	                                <div class="form-checks flex-fill">
+	                                    <input type="checkbox" class="btn-check" id="eatdrink1s">
+	                                    <label class="btn btn-sm btn-secondary rounded-1 fw-medium full-width" for="eatdrink1s">Eat & Drink</label>
+	                                </div>
+
+	                                <!-- Item -->
+	                                <div class="form-checks flex-fill">
+	                                    <input type="checkbox" class="btn-check" id="Apartmentss">
+	                                    <label class="btn btn-sm btn-secondary rounded-1 fw-medium full-width" for="Apartmentss">Apartments</label>
+	                                </div>
+
+	                                <!-- Item -->
+	                                <div class="form-checks flex-fill">
+	                                    <input type="checkbox" class="btn-check" id="classifieds1s">
+	                                    <label class="btn btn-sm btn-secondary rounded-1 fw-medium full-width" for="classifieds1s">Classified</label>
+	                                </div>
+
+	                                <!-- Item -->
+	                                <div class="form-checks flex-fill">
+	                                    <input type="checkbox" class="btn-check" id="services1s" checked>
+	                                    <label class="btn btn-sm btn-secondary rounded-1 fw-medium full-width" for="services1s">Services</label>
+	                                </div>
+
+	                                <!-- Item -->
+	                                <div class="form-checks flex-fill">
+	                                    <input type="checkbox" class="btn-check" id="gymfitness1s">
+	                                    <label class="btn btn-sm btn-secondary rounded-1 fw-medium full-width" for="gymfitness1s">Gym & Fitness</label>
+	                                </div>
+
+	                                <!-- Item -->
+	                                <div class="form-checks flex-fill">
+	                                    <input type="checkbox" class="btn-check" id="nightlife1s">
+	                                    <label class="btn btn-sm btn-secondary rounded-1 fw-medium full-width" for="nightlife1s">Night Life</label>
+	                                </div>
+
+	                                <!-- Item -->
+	                                <div class="form-checks flex-fill">
+	                                    <input type="checkbox" class="btn-check" id="coachings1s">
+	                                    <label class="btn btn-sm btn-secondary rounded-1 fw-medium full-width" for="coachings1s">Coaching</label>
+	                                </div>
+
+	                                <!-- Item -->
+	                                <div class="form-checks flex-fill">
+	                                    <input type="checkbox" class="btn-check" id="shoppings1s">
+	                                    <label class="btn btn-sm btn-secondary rounded-1 fw-medium full-width" for="shoppings1s">Shopping</label>
+	                                </div>
+
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+
+	                <!-- Price Range -->
+	                <div class="filter-search-box mb-4">
+	                    <div class="filtersearch-title"><h6 class="mb-2 lh-base text-sm text-uppercase fw-medium">Price Range in USD</h6></div>
+	                    <div class="row align-items-center justify-content-between">
+	                        <div class="col-12">
+	                            <div class="searchBar-single-wrap mt-2">
+	                                <input type="text" class="pricefilter" name="my_range" value="" data-skin="round"
+	                                    data-type="double" data-min="0" data-max="500" data-grid="false">
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+
+	                <!-- Price Range -->
+	                <div class="filter-search-box mb-4">
+	                    <div class="filtersearch-title"><h6 class="mb-2 lh-base text-sm text-uppercase fw-medium">Distance Filter in Km</h6></div>
+	                    <div class="row align-items-center justify-content-between">
+	                        <div class="col-12">
+	                            <div class="searchBar-single-wrap mt-2">
+	                                <input type="text" class="distancefilter" name="my_range" value="" data-skin="round"
+	                                data-type="single" data-grid="false">
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+
+	                <!-- More Filter -->
+	                <div class="filter-search-box mb-4">
+	                <div class="filtersearch-title"><h6 class="mb-2 lh-base text-sm text-uppercase fw-medium">Amenities</h6></div>
+	                    <div class="row align-items-center justify-content-between gy-2">
+	                        <div class="col-6">
+	                            <div class="form-check">
+	                                <input class="form-check-input" type="checkbox" id="airconditionss">
+	                                <label class="form-check-label" for="airconditionss">Air Condition</label>
+	                            </div>
+	                        </div>
+	                        <div class="col-6">
+	                            <div class="form-check">
+	                                <input class="form-check-input" type="checkbox" id="gardenss">
+	                                <label class="form-check-label" for="gardenss">Garden</label>
+	                            </div>
+	                        </div>
+	                        <div class="col-6">
+	                            <div class="form-check">
+	                                <input class="form-check-input" type="checkbox" id="parkingss">
+	                                <label class="form-check-label" for="parkingss">Parking</label>
+	                            </div>
+	                        </div>
+	                        <div class="col-6">
+	                            <div class="form-check">
+	                                <input class="form-check-input" type={"checkboxs" as any} id="petallows">
+	                                <label class="form-check-label" for="petallow">Pet Allow</label>
+	                            </div>
+	                        </div>
+	                        <div class="col-6">
+	                            <div class="form-check">
+	                                <input class="form-check-input" type="checkbox" id="freewifis">
+	                                <label class="form-check-label" for="freewifis">Free WiFi</label>
+	                            </div>
+	                        </div>
+	                        <div class="col-6">
+	                            <div class="form-check">
+	                                <input class="form-check-input" type="checkbox" id="breakfasts">
+	                                <label class="form-check-label" for="breakfasts">Breakfast</label>
+	                            </div>
+	                        </div>
+	                        <div class="col-6">
+	                            <div class="form-check">
+	                                <input class="form-check-input" type="checkbox" id="dinners">
+	                                <label class="form-check-label" for="dinners">Dinner</label>
+	                            </div>
+	                        </div>
+	                        <div class="col-6">
+	                            <div class="form-check">
+	                                <input class="form-check-input" type="checkbox" id="smokings">
+	                                <label class="form-check-label" for="smokings">Smoking</label>
+	                            </div>
+	                        </div>
+	                        <div class="col-6">
+	                            <div class="form-check">
+	                                <input class="form-check-input" type="checkbox" id="swimmings">
+	                                <label class="form-check-label" for="swimmings">Swimming</label>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+
+	                <div class="form-group filter_button mb-0">
+	                    <button type="submit" class="btn btn-primary fw-medium full-width">Save & Update</button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+
+	</div>
+
+  <Footer />
+</Base>

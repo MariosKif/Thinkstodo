@@ -1,0 +1,472 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import Footer from '../components/nav/Footer.astro';
+import Subscribe from '../components/shared/Subscribe.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+import { brands, categories, listings3, cities, reviews, blogs } from '../lib/data/context';
+
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+---
+<Base title="ThinksToDo - Business Directory & Listing Template">
+  <Navbar headerClass="header header-transparent dark navdark" logo="/assets/img/logo-light.svg" addListingLight={true} />
+
+<Preloader />
+
+<div class="clearfix"></div>
+
+<!-- Hero Start -->
+<div class="image-cover hero-header full-height position-relative" style="background:url(/assets/img/banner-7.jpg)no-repeat;" data-overlay="6">
+	<div class="container">
+
+		<!-- Heading Rwo -->
+		<div class="row justify-content-center align-items-center mb-5 pt-lg-0 pt-5">
+			<div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
+				<div class="position-relative text-center">
+					<h1>Explore Nearby Restaurants</h1>
+					<p class="fs-5 fw-light">Browse high-rated hotels, restaurants, attractions, activities and more!</p>
+				</div>
+			</div>
+		</div>
+		<!-- </row> -->
+
+		<!-- Search Form row -->
+		<div class="row align-items-start justify-content-center">
+			<div class="col-xl-11 col-lg-12 col-md-12 col-sm-12">
+				<form class="heroSearch style-02" action="/half-map-03/" method="get">
+					<div class="row gx-lg-2 gx-md-2 gx-3 gy-sm-2 gy-2">
+						<div class="col-xl-4 col-lg-3 col-md-12 col-sm-12">
+							<div class="form-group position-relative">
+								<input type="text" name="q" class="form-control fs-6 fw-medium" placeholder="What are you looking for?">
+							</div>
+						</div>
+						<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+							<div class="form-group position-relative">
+								<input type="text" name="location" class="form-control fs-6 fw-medium" placeholder="Location">
+								<span class="position-absolute top-50 end-0 translate-middle me-2"><i class="fa-solid fa-location-dot text-muted opacity-50 fs-5"></i></span>
+							</div>
+						</div>
+						<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+							<div class="form-group fw-medium lights-bg">
+								<div class="selects">
+									<select name="category" class="categories form-control">
+										<option label="option"></option>
+										<option value="lv">Eat & Drinking</option>
+										<option value="la">Rental Property</option>
+										<option value="kc">Classifieds</option>
+										<option value="no">Bank Services</option>
+										<option value="sh">Shopping</option>
+										<option value="lb">Fintess & Gym</option>
+										<option value="cl">Coaching</option>
+										<option value="cn">Other Services</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-2 col-lg-3 col-md-12 col-sm-12">
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary full-width fw-medium"><i class="bi bi-search me-2"></i>Search</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- End Search Form Row -->
+
+	</div>
+	<div class="mousedrop z-1"><a href="#mains" class="mousewheel center"><i class="bi bi-mouse"></i></a></div>
+</div>
+<!-- Hero End -->
+
+
+<!-- Brand Image Start -->
+<section class="py-5 pb-0">
+	<div class="container">
+		<div class="row align-items-center justify-content-center">
+			<div class="col-xl-12 col-lg-12 col-md-12 col-12">
+				<div class="owl-carousel brand-slider">
+
+					<!-- Components/Home/index/brand.html -->
+					{brands.map((item) => (
+					<div class="brand-slide px-3 px-lg-5">
+					    <img src={item.img} class="light-mode-item img-fluid" alt="brand image">
+					</div>
+					))}
+
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Brand Image End -->
+
+
+<!-- Trending Category Start -->
+<section class="pb-0">
+	<div class="container">
+
+		<div class="row align-items-center justify-content-center">
+			<div class="col-xl-7 col-lg-8 col-md-11 col-sm-12">
+				<div class="secHeading-wrap text-center">
+					<h3 class="sectionHeading">Hot & Trending <span class="text-primary">Categories</span></h3>
+					<p>Explore all types of popular category for submit your listings</p>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row align-items-center justify-content-center">
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+				<div class="owl-carousel categorySlider">
+
+					<!-- Components/Home/index/categories.html -->
+					{categories.map((item) => (
+					<div class="singleCategory">
+						<div class="category-small-wrapper light">
+							<a href="#" class="categoryBox">
+								<div class="categoryCapstions">
+									<div class="catsIcons"><div class="icoBoxx"><i class={item.icon}></i></div></div>
+									<div class="catsTitle"><h5>{item.title}</h5></div>
+									<div class="CatsLists"><span class="categorycounter">{item.lists}</span></div>
+								</div>
+							</a>
+						</div>
+					</div>
+					))}
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+</section>
+<!-- Trending Category End -->
+
+
+<!-- Trending Listing Start -->
+<section>
+	<div class="container">
+
+		<div class="row align-items-center justify-content-center">
+			<div class="col-xl-7 col-lg-8 col-md-11 col-sm-12">
+				<div class="secHeading-wrap text-center">
+					<h3 class="sectionHeading">Explore Trending <span class="text-primary">Listings</span></h3>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row align-items-center justify-content-center g-4">
+
+			<!-- Components/Home/home-4/listings3.html -->
+			{listings3.map((item) => (
+			<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+			    <div class="listingitem-container">
+			        <div class="singlelisting-item">
+			            <div class="listing-top-item">
+			                <a href="#" class="topLink">
+			                    <div class="position-absolute start-0 top-0 ms-3 mt-3 z-2">
+			                        <div class="d-flex align-items-center justify-content-start gap-2">
+			                            <span class={`badge badge-xs text-uppercase ${item.color}`}>{item.btn}</span>
+			                            <span class="badge badge-xs badge-transparent">{item.dollar}</span>
+
+			                            {item.tag === 'true' && (
+			                                <span class="badge badge-xs badge-transparent"><i class="bi bi-star mb-0 me-1"></i>{item.btn1}</span>
+			                            )}
+
+			                        </div>
+			                    </div>
+			                    <img src={item.img} class="img-fluid" alt="Listing Image">
+			                </a>
+			                <div class="position-absolute end-0 bottom-0 me-3 mb-3 z-2">
+			                    <a href="#" class="bookmarkList" data-bs-toggle="tooltip" data-bs-title="Save Listing"><i class="bi bi-suit-heart m-0"></i></a>
+			                </div>
+			            </div>
+			            <div class="listing-middle-item">
+			                <div class="listing-avatar">
+			                    <a href="#" class="avatarImg"><img src={item.img1} class="img-fluid circle" alt="Avatar"></a>
+			                </div>
+			                <div class="listing-details">
+			                    <h4 class="listingTitle"><a href={`/single-listing-04/${slugify(item.title)}/`} class="titleLink">{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h4>
+			                    <p>{item.desc}</p>
+			                </div>
+			                <div class="listing-info-details">
+			                    <div class="d-flex align-items-center justify-content-start gap-4">
+			                        <div class="list-calls"><i class="bi bi-telephone mb-0 me-2"></i>{item.number}</div>
+			                        <div class="list-location"><i class="bi bi-geo-alt mb-0 me-2"></i>{item.location}</div>
+			                    </div>
+			                </div>
+			            </div>
+			            <div class="listing-footer-item">
+			                <div class="d-flex align-items-center justify-content-between gap-2">
+			                    <div class="catdWraps">
+			                        <div class="flex-start">
+			                            <a href="#" class="d-flex align-items-center justify-content-start gap-2">
+			                                <span class={item.span}><i class={item.icon}></i></span>
+			                                <span class="catTitle">{item.name}</span>
+			                            </a>
+			                        </div>
+			                        <div class="flex-end"><span class="moreCatcounter">{item.plus}</span></div>
+			                    </div>
+			                    <div class="listing-shares">
+			                        <div class="d-flex align-items-center justify-content-start gap-2">
+			                            <a href="#" class="smallLinks" data-bs-toggle="tooltip" data-bs-title="View Listing"><i class="bi bi-eye-fill m-0"></i></a>
+			                            <a href="#" class="smallLinks" data-bs-toggle="tooltip" data-bs-title="Save Listing"><i class="bi bi-suit-heart m-0"></i></a>
+			                            <a href="#" class="smallLinks" data-bs-toggle="tooltip" data-bs-title="Share Listing"><i class="bi bi-share-fill m-0"></i></a>
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+			))}
+
+		</div>
+
+		<div class="row align-items-center justify-content-center mt-5">
+			<div class="col-xl-12 col-lg-12 col-md-12 col-12">
+				<div class="text-center"><button type="button" class="btn btn-light-primary fw-medium rounded-pill px-md-5">Explore More listings</button></div>
+			</div>
+		</div>
+
+	</div>
+</section>
+<!-- Trending Listing End -->
+
+
+<!-- Listing By Places Start -->
+<section class="bg-light">
+	<div class="container">
+
+		<div class="row align-items-center justify-content-center">
+			<div class="col-xl-7 col-lg-8 col-md-11 col-sm-12">
+				<div class="secHeading-wrap text-center">
+					<h3 class="sectionHeading">Explore Listings By <span class="text-primary">Cities</span></h3>
+					<p>Our cliens love our services and give great & positive reviews</p>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row align-items-center justify-content-center g-4">
+
+			<!-- Components/Home/home-2/cities.html -->
+			{cities.map((item) => (
+			<div class={item.style}>
+			    <div class="card border-0 rounded-4 ht-300 position-relative">
+			        <a href="#" class="h-100" tabindex="-1">
+			            <div class="abx-thumb h-100" data-overlay="3">
+			                <img src={item.img} class="w-100 h-100 object-fit" alt="">
+			            </div>
+			        </a>
+			        <div class="position-absolute top-0 end-0 mt-3 me-3 z-1">
+			            <span class="badge badge-xs bg-light text-dark rounded-pill">{item.lists}</span>
+			        </div>
+			        <div class="position-absolute bottom-0 start-0 mb-3 ms-3 z-1">
+			            <div class="d-block w-100 position-relative">
+			                <div class="cityTitle">
+			                    <h4 class="text-light">{item.title}</h4>
+			                </div>
+			                <div class="d-flex align-items-center justify-content-start flex-wrap gap-2">
+			                    <span class="badge badge-xs badge-transparent rounded-pill">San Diego</span>
+			                    <span class="badge badge-xs badge-transparent rounded-pill">New York</span>
+			                    <span class="badge badge-xs badge-transparent rounded-pill">Dallas</span>
+			                    <span class="badge badge-xs badge-transparent rounded-pill">Denver</span>
+			                </div>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+			))}
+
+		</div>
+
+	</div>
+</section>
+<!-- Listing By Places End -->
+
+
+<!-- Why Choose ThinksToDo Start -->
+<section>
+	<div class="container">
+		<div class="row align-items-center justify-content-between g-4">
+
+			<!-- Components/Home/home-4/platform.html -->
+			<div class="col-xl-5 col-lg-6 col-md-5">
+			    <div class="featuresImage">
+			        <img src="/assets/img/search-engine-isometric.svg" class="img-fluid" alt="Features Image">
+			    </div>
+			</div>
+
+			<div class="col-xl-5 col-lg-6 col-md-6">
+			    <div class="featuresCaption">
+			        <div class="fstsTitle mb-4">
+			            <h3 class="fw-medium lh-base">Why People Love & Select ThinksToDo Platform?</h3>
+			        </div>
+			        <div class="fstsFeatures mb-4">
+			            <div class="d-flex flex-column gap-4">
+
+			                <!-- Single Item -->
+			                <div class="d-flex align-items-start justify-content-start gap-3">
+			                    <div class="fstlsIcons"><i class="bi bi-piggy-bank text-primary fs-1"></i></div>
+			                    <div class="fstlsPara">
+			                        <h5 class="fw-medium">Save your budget</h5>
+			                        <p class="lead m-0">Think of a news blog that's filled with content hourly on the day of going live.</p>
+			                    </div>
+			                </div>
+			                <!-- Single Item -->
+			                <div class="d-flex align-items-start justify-content-start gap-3">
+			                    <div class="fstlsIcons"><i class="bi bi-shield-check text-primary fs-1"></i></div>
+			                    <div class="fstlsPara">
+			                        <h5 class="fw-medium">Safe &amp; pure secure</h5>
+			                        <p class="lead m-0">Think of a news blog that's filled with content hourly on the day of going live.</p>
+			                    </div>
+			                </div>
+
+			            </div>
+			        </div>
+			        <div class="fstsButton">
+			            <button class="btn btn-light-primary rounded-pill fw-medium" type="button">Submit Your Listing</button>
+			        </div>
+			    </div>
+			</div>
+
+		</div>
+	</div>
+</section>
+<!-- Why Choose ThinksToDo End -->
+
+
+<!-- Our Reviews Start -->
+<section class="bg-light">
+	<div class="container">
+
+		<div class="row align-items-center justify-content-center">
+			<div class="col-xl-7 col-lg-8 col-md-11 col-sm-12">
+				<div class="secHeading-wrap text-center">
+					<h3 class="sectionHeading">Our Great <span class="text-primary">Reviews</span></h3>
+					<p>Our cliens love our services and give great & positive reviews</p>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row align-items-center justify-content-center">
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+				<div class="owl-carousel owl-theme reviewsSlide">
+
+					<!-- Components/Home/index/reviews.html -->
+					{reviews.map((item) => (
+					<div class="singleItem">
+					    <div class="reviews-wrappers">
+					        <div class="reviewsBox card border-0 rounded-4 shadow-sm">
+					            <div class="card-body p-xl-5 p-lg-5 p-4">
+					                <div class="reviews-topHeader d-flex flex-column mb-3">
+					                    <div class="d-flex align-items-center justify-content-center mb-2">
+					                    <span class="me-1 text-sm text-warning"><i class="fa-solid fa-star"></i></span>
+					                    <span class="me-1 text-sm text-warning"><i class="fa-solid fa-star"></i></span>
+					                    <span class="me-1 text-sm text-warning"><i class="fa-solid fa-star"></i></span>
+					                    <span class="me-1 text-sm text-warning"><i class="fa-solid fa-star"></i></span>
+					                    <span class="me-1 text-sm text-warning"><i class="fa-solid fa-star"></i></span>
+					                    </div>
+					                    <div class="revws-desc text-center">
+					                        <p class="text-dark fw-semibold mb-1">"{item.title}"</p>
+					                        <p class="m-0 text-dark">{item.desc}</p>
+					                    </div>
+					                </div>
+					            </div>
+
+					        </div>
+					        <div class="reviewsers d-flex flex-column mt-5">
+					            <div class="d-flex align-items-center flex-column flex-thumbes gap-2">
+					                <div class="revws-pic"><img src={item.img} class="img-fluid circle" width="55" alt=""></div>
+					                <div class="revws-caps text-center">
+					                    <h6 class="fw-medium fs-6 m-0">{item.name}</h6>
+					                    <p class="text-muted-2 text-md m-0">{item.name1}</p>
+					                </div>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+					))}
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+</section>
+<!-- Our Reviews End -->
+
+
+<!-- Latest Updates Start -->
+<section>
+	<div class="container">
+
+		<div class="row align-items-center justify-content-center">
+			<div class="col-xl-7 col-lg-8 col-md-11 col-sm-12">
+				<div class="secHeading-wrap text-center">
+					<h3 class="sectionHeading">Latest Updates <span class="text-primary">News</span></h3>
+					<p>Join ThinksToDo and get latest & trending updates about listing</p>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row align-items-center justify-content-center g-4">
+
+			<!-- Components/Home/index/blog.html -->
+			{blogs.slice(0, 3).map((item) => (
+			<div class="col-xl-4 col-lg-4 col-md-6">
+			    <div class="card rounded-4 shadow-sm h-100">
+			        <a href="#" class="d-block bg-gradient rounded-top">
+			            <img class="card-img-top hover-fade-out" src={item.img} alt="blog image">
+			        </a>
+			        <div class="card-body">
+			            <a href={`/blog-detail/${slugify(item.title)}/`}><h4 class="fw-medium fs-5 lh-base mb-3">{item.title}</h4></a>
+			            <p>{item.desc}</p>
+			            <div class="d-flex align-items-center justify-content-start mt-4">
+			                <a href="#" class="badge badge-primary rounded-pill">Continue Reading</a>
+			            </div>
+			        </div>
+			        <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
+			            <a href="#" class="text-dark fw-medium text-md"><i class="bi bi-calendar-check me-2"></i>{item.date}</a>
+			            <div class="text-muted text-md"><i class="bi bi-eye-fill me-2"></i>{item.views}</div>
+			        </div>
+			    </div>
+			</div>
+			))}
+
+		</div>
+
+	</div>
+</section>
+<!-- Latest Updates End -->
+
+
+<!-- Call To Action Start -->
+<section class="bg-cover bg-primary-2 position-relative py-5" style="background:url(/assets/img/brand-section.png)no-repeat;">
+	<div class="container">
+
+		<!-- Components/Home/index/subscribe.html -->
+		<Subscribe />
+
+	</div>
+</section>
+<!-- Call To Action Start -->
+
+
+	<!-- Components/Home/index/log.html -->
+	<LoginModal />
+
+
+	<!-- Components/Home/index/cart.html -->
+	<!-- Components/Home/index/search.html -->
+	<SearchOffcanvas />
+
+  <Footer />
+</Base>

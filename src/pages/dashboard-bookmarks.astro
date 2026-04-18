@@ -1,0 +1,145 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import Footer from '../components/nav/Footer.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
+import { saveds } from '../lib/data/context';
+---
+<Base title="Bookmarks - ThinksToDo">
+  <Navbar headerClass="header header-light head-shadow" />
+
+  <Preloader />
+
+  <!-- Dashboard Start -->
+  <section class="p-0">
+    <div class="container-fluid p-0">
+      <div class="row user-dashboard g-0">
+
+        <!-- Dashboard Sidebar -->
+        <div class="col-xl-2 col-lg-3 col-md-12">
+          <DashboardSidebar current="bookmarks" />
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="col-xl-10 col-lg-9 col-md-12">
+          <div class="user-dashboard-box bg-light">
+
+            <!-- Dashboard Title -->
+            <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
+              <h2 class="fw-medium mb-0">Bookmarked</h2>
+            </div>
+
+            <!-- Dashboard Details -->
+            <div class="dashCaption p-xl-5 p-3 p-md-4">
+
+              <!-- Row Start -->
+              <div class="row align-items-start g-4 mb-lg-5 mb-4">
+                <div class="col-xl-12 col-lg-12 col-md-12">
+                  <div class="card rounded-3 shadow-sm">
+                    <div class="card-header px-4 py-3">
+                      <h4 class="m-0">Saved Listings</h4>
+                    </div>
+                    <div class="card-body p-0">
+                      <ul class="dashboardListgroup">
+
+                        <!-- Components/User-Dashboard/dashboard-bookmarks/saved.html -->
+                        {saveds.map((item: any) => (
+                          <li>
+                            <div class="mngListings">
+                              <div class="d-flex align-items-center justify-content-start gap-3 flex-wrap">
+                                <div class="mngListinfirst">
+                                  <div class="d-flex align-items-center justify-content-start gap-3 flex-wrap">
+                                    <div class="mngListings-thumb">
+                                      <figure class="m-0"><img src={item.img} class="img-fluid rounded" alt="Avatar" /></figure>
+                                    </div>
+
+                                    <div class="mngListings-caps">
+                                      <h5 class="mnglstTitle">{item.title}</h5>
+                                      <span>{item.desc}</span>
+                                      <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
+                                        <div class="ratingView" data-rating="5.0">
+                                          <i class="bi bi-star-fill"></i>
+                                          <i class="bi bi-star-fill"></i>
+                                          <i class="bi bi-star-fill"></i>
+                                          <i class="bi bi-star-fill"></i>
+                                          <i class="bi bi-star-half"></i>
+                                        </div>
+                                        <div class="text-md">{item.reviews}</div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="mngListinlast">
+                                  <div class="d-flex align-items-center justify-content-start gap-3">
+                                    <a href="#" class="btn btn-sm btn-light-danger fw-medium rounded-pill"><i class="bi bi-x me-1"></i>Remove</a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <!-- Row End -->
+
+              <!-- Row Start -->
+              <div class="row align-items-start g-4">
+                <div class="col-xl-12 col-lg-12 col-md-12">
+                  <p class="text-muted m-0">&copy; <script is:inline>document.write(new Date().getFullYear())</script> ThinksToDo. Develop with <i class="mdi mdi-heart text-danger"></i> by <a href="https://shreethemes.in" target="_blank" class="text-reset">Shreethemes</a>.</p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <!-- Dashboard End -->
+
+
+  <!-- Components/Home/index/cart.html -->
+  <!-- Components/Listings/Single-Listings/single-listing-01/message.html -->
+  <!-- Message Modal -->
+  <div class="modal modal-lg fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-light border-0 px-md-5">
+          <h4 class="modal-title fw-medium" id="messageModalLabel">Send Message</h4>
+          <a href="#" data-bs-dismiss="modal" aria-label="Close" class="square--40 circle bg-light-danger text-danger"><i class="bi bi-x"></i></a>
+        </div>
+        <div class="modal-body p-md-5">
+          <div class="messageForm">
+            <div class="form-group">
+              <textarea class="form-control" placeholder="Type your Message To Dan"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary fw-medium px-md-5">Send message<i class="bi bi-arrow-right ms-2"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Components/Home/index/search.html -->
+  <SearchOffcanvas />
+
+
+  <!-- Components/Home/index/log.html -->
+  <LoginModal />
+
+
+  <Footer />
+</Base>
+</content>
+</invoke>

@@ -1,0 +1,213 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/nav/Navbar.astro';
+import Footer from '../components/nav/Footer.astro';
+import Subscribe from '../components/shared/Subscribe.astro';
+import LoginModal from '../components/shared/LoginModal.astro';
+import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
+import Preloader from '../components/shared/Preloader.astro';
+import { faqs } from '../lib/data/context';
+---
+<Base title="FAQs - ThinksToDo">
+  <Navbar headerClass="header header-light head-shadow" />
+
+<Preloader />
+
+<div class="clearfix"></div>
+
+<!-- Page Title Start -->
+<section class="bg-light">
+	<div class="container">
+
+		<!-- Search Form -->
+		<div class="row justify-content-start align-items-center pt-lg-0 pt-5">
+			<div class="col-xl-7 col-lg-9 col-md-12 col-sm-12">
+				<div class="position-relative">
+					<h1 class="xl-heading">FAQ's</h1>
+					<nav id="breadcrumbs" class="breadcrumbs">
+						<ul>
+							<li><a href="/">Home</a></li>
+							<li><a href="#">Pages</a></li>
+							<li>Faq's</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+		<!-- </row> -->
+
+	</div>
+</section>
+<!-- Page Title End -->
+
+
+<!-- FAQ's Section -->
+<section>
+	<div class="container">
+
+		<div class="row align-items-start">
+			<div class="col-xl-12 col-lg-12 col-md-12">
+				<div class="d-flex align-items-start flex-column gap-xl-5 gap-4">
+
+					<!-- Components/Pages/faq/faqs.html -->
+					{faqs.map((item) => (
+					<div class="faqsWraps w-100">
+					    <div class="fasqHeads mb-3">
+					        <h4>{item.name}</h4>
+					    </div>
+					    <div class="faqsCaps">
+					        <div class="accordion accordion-flush" id={item.mid}>
+					            <div class="accordion-item">
+					                <h2 class="accordion-header rounded-2">
+					                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+					                        data-bs-target={`#${item.id}`} aria-expanded="false" aria-controls={item.id}>
+					                        {item.title}
+					                    </button>
+					                </h2>
+					                <div id={item.id} class="accordion-collapse collapse" data-bs-parent={`#${item.mid}`}>
+					                    <div class="accordion-body">{item.desc}</div>
+					                </div>
+					            </div>
+					            <div class="accordion-item">
+					                <h2 class="accordion-header">
+					                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+					                        data-bs-target={`#${item.id1}`} aria-expanded="false" aria-controls={item.id1}>
+					                        {item.title1}
+					                    </button>
+					                </h2>
+					                <div id={item.id1} class="accordion-collapse collapse" data-bs-parent={`#${item.mid}`}>
+					                    <div class="accordion-body">{item.desc}</div>
+					                </div>
+					            </div>
+					            <div class="accordion-item">
+					                <h2 class="accordion-header">
+					                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+					                        data-bs-target={`#${item.id2}`} aria-expanded="false" aria-controls={item.id2}>
+					                        {item.title2}
+					                    </button>
+					                </h2>
+					                <div id={item.id2} class="accordion-collapse collapse"
+					                    data-bs-parent={`#${item.mid}`}>
+					                    <div class="accordion-body">{item.desc}</div>
+					                </div>
+					            </div>
+					            <div class="accordion-item">
+					                <h2 class="accordion-header">
+					                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+					                        data-bs-target={`#${item.id3}`} aria-expanded="false" aria-controls={item.id3}>
+					                        {item.title3}
+					                    </button>
+					                </h2>
+					                <div id={item.id3} class="accordion-collapse collapse"
+					                    data-bs-parent={`#${item.mid}`}>
+					                    <div class="accordion-body">{item.desc}</div>
+					                </div>
+					            </div>
+					            <div class="accordion-item">
+					                <h2 class="accordion-header">
+					                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+					                        data-bs-target={`#${item.id4}`} aria-expanded="false" aria-controls={item.id4}>
+					                        {item.title4}
+					                    </button>
+					                </h2>
+					                <div id={item.id4} class="accordion-collapse collapse"
+					                    data-bs-parent={`#${item.mid}`}>
+					                    <div class="accordion-body">{item.desc}</div>
+					                </div>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+					))}
+
+
+					<!-- Components/Pages/faq/faqs2.html -->
+					<!-- Single Wrap -->
+					<div class="faqsWraps w-100">
+					    <div class="fasqHeads mb-3">
+					        <h4>Support & Help</h4>
+					    </div>
+					    <div class="faqsCaps">
+					        <div class="accordion accordion-flush" id="supportFlushExample">
+					            <div class="accordion-item">
+					                <h2 class="accordion-header">
+					                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+					                        data-bs-target="#flush-collapseOne3" aria-expanded="false" aria-controls="flush-collapseOne3">
+					                        Realcout Agent Can Chat Online?
+					                    </button>
+					                </h2>
+					                <div id="flush-collapseOne3" class="accordion-collapse collapse" data-bs-parent="#supportFlushExample">
+					                    <div class="accordion-body">In a professional context it often happens that private or corporate
+					                        clients corder a publication to be made and presented with the actual content still not being ready.
+					                        Think of a news blog that's filled with content hourly on the day of going live. However, reviewers
+					                        tend to be distracted by comprehensible content, say, a random text copied from a newspaper or the
+					                        internet. The are likely to focus on the text, disregarding the layout and its elements.</div>
+					                </div>
+					            </div>
+					            <div class="accordion-item">
+					                <h2 class="accordion-header">
+					                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+					                        data-bs-target="#flush-collapseTwo3" aria-expanded="false" aria-controls="flush-collapseTwo3">
+					                        Can I Call Agent on Site?
+					                    </button>
+					                </h2>
+					                <div id="flush-collapseTwo3" class="accordion-collapse collapse" data-bs-parent="#supportFlushExample">
+					                    <div class="accordion-body">In a professional context it often happens that private or corporate
+					                        clients corder a publication to be made and presented with the actual content still not being ready.
+					                        Think of a news blog that's filled with content hourly on the day of going live. However, reviewers
+					                        tend to be distracted by comprehensible content, say, a random text copied from a newspaper or the
+					                        internet. The are likely to focus on the text, disregarding the layout and its elements.</div>
+					                </div>
+					            </div>
+					            <div class="accordion-item">
+					                <h2 class="accordion-header">
+					                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+					                        data-bs-target="#flush-collapseThree3" aria-expanded="false" aria-controls="flush-collapseThree3">
+					                        Is This Collaborate with Oyo?
+					                    </button>
+					                </h2>
+					                <div id="flush-collapseThree3" class="accordion-collapse collapse"
+					                    data-bs-parent="#supportFlushExample">
+					                    <div class="accordion-body">In a professional context it often happens that private or corporate
+					                        clients corder a publication to be made and presented with the actual content still not being ready.
+					                        Think of a news blog that's filled with content hourly on the day of going live. However, reviewers
+					                        tend to be distracted by comprehensible content, say, a random text copied from a newspaper or the
+					                        internet. The are likely to focus on the text, disregarding the layout and its elements.</div>
+					                </div>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+</section>
+<!-- FAQ's Section End -->
+
+
+<!-- Call To Action Start -->
+<section class="bg-cover bg-primary-2 position-relative py-5" style="background:url(/assets/img/brand-section.png)no-repeat;">
+	<div class="container">
+
+		<!-- Components/Home/index/subscribe.html -->
+		<Subscribe />
+
+	</div>
+</section>
+<!-- Call To Action Start -->
+
+
+	<!-- Components/Home/index/log.html -->
+	<LoginModal />
+
+
+	<!-- Components/Home/index/cart.html -->
+	<!-- Components/Home/index/search.html -->
+	<SearchOffcanvas />
+
+
+	<Footer />
+</Base>
