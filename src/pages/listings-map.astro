@@ -4,19 +4,44 @@ import Navbar from '../components/nav/Navbar.astro';
 import Footer from '../components/nav/Footer.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
-import { getPublishedListings, getMappableListings } from '../lib/supabase/listings';
+import { searchListings } from '../lib/supabase/listings';
 import '../styles/listings-map.css';
 
 export const prerender = false;
 
 const supabase = Astro.locals.supabase;
-const [mappable, allPublished] = await Promise.all([
-  getMappableListings(supabase, { limit: 200 }),
-  getPublishedListings(supabase, { limit: 200 }),
-]);
+const params = Astro.url.searchParams;
+const q = params.get('q')?.trim() ?? '';
+const category = params.get('category')?.trim() ?? '';
+const city = params.get('city')?.trim() ?? '';
+const hasFilter = Boolean(q || category || city);
+
+// One query drives both the sidebar and the markers.
+const allPublished = await searchListings(supabase, {
+  q: q || undefined,
+  categorySlug: category || undefined,
+  city: city || undefined,
+  limit: 200,
+});
+const mappable = allPublished.filter((l) => l.lat !== null && l.lng !== null);
 
 const totalCount = allPublished.length;
 const mappableCount = mappable.length;
+
+// Load the category list so the inline search form's dropdown reflects reality.
+const { data: categoryRows } =
+  (await supabase?.from('categories').select('slug, name').order('sort_order')) ?? { data: [] };
+const categories = categoryRows ?? [];
+
+// Friendly label for the active filter (shown above the results list).
+const filterParts: string[] = [];
+if (q) filterParts.push(`“${q}”`);
+if (category) {
+  const catName = categories.find((c: any) => c.slug === category)?.name ?? category;
+  filterParts.push(`in ${catName}`);
+}
+if (city) filterParts.push(`near ${city}`);
+const filterLabel = filterParts.join(' ');
 
 const markersPayload = mappable.map((l) => ({
   id: l.id,
@@ -39,24 +64,52 @@ const markersPayload = mappable.map((l) => ({
   <section class="lm-layout">
 
     <aside class="lm-sidebar-col">
-      <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap mb-3">
-        <div>
-          <h1 class="h4 fw-semibold mb-1">Explore listings on the map</h1>
-          <p class="text-muted mb-0">
-            {totalCount} {totalCount === 1 ? 'listing' : 'listings'} published · {mappableCount} on the map
-          </p>
-        </div>
-        <form action="/search" method="get" class="d-flex gap-2 flex-grow-1 flex-md-grow-0" style="max-width: 320px;">
-          <input type="search" name="q" class="form-control" placeholder="Search listings…" />
-          <button type="submit" class="btn btn-primary rounded-pill px-3"><i class="bi bi-search"></i></button>
-        </form>
+      <div class="mb-3">
+        <h1 class="h4 fw-semibold mb-1">
+          {hasFilter ? `Results for ${filterLabel}` : 'Explore listings on the map'}
+        </h1>
+        <p class="text-muted mb-0">
+          {totalCount} {totalCount === 1 ? 'listing' : 'listings'} {hasFilter ? 'matching' : 'published'} · {mappableCount} on the map
+          {hasFilter && (
+            <> · <a href="/listings-map/" class="text-primary fw-medium">clear filters</a></>
+          )}
+        </p>
       </div>
+
+      <form action="/listings-map/" method="get" class="card p-3 mb-3">
+        <div class="row g-2 align-items-end">
+          <div class="col-12 col-md-6">
+            <label class="form-label text-md mb-1">Keywords</label>
+            <input type="search" name="q" value={q} class="form-control form-control-sm" placeholder="e.g. gym, brunch" />
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="form-label text-md mb-1">Category</label>
+            <select name="category" class="form-control form-control-sm">
+              <option value="">All</option>
+              {categories.map((c: any) => (
+                <option value={c.slug} selected={c.slug === category}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="form-label text-md mb-1">City</label>
+            <input type="text" name="city" value={city} class="form-control form-control-sm" placeholder="Any" />
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary btn-sm rounded-pill px-4"><i class="bi bi-search me-1"></i>Search</button>
+          </div>
+        </div>
+      </form>
 
       {allPublished.length === 0 ? (
         <div class="lm-empty">
           <i class="bi bi-pin-map fs-1 text-muted"></i>
-          <h5 class="mb-0">No listings yet</h5>
-          <p class="mb-0">Be the first — <a href="/dashboard-add-listing/" class="text-primary fw-medium">add your listing</a>.</p>
+          <h5 class="mb-0">{hasFilter ? 'No matching listings' : 'No listings yet'}</h5>
+          <p class="mb-0">
+            {hasFilter
+              ? <>Try <a href="/listings-map/" class="text-primary fw-medium">clearing your filters</a>.</>
+              : <>Be the first — <a href="/dashboard-add-listing/" class="text-primary fw-medium">add your listing</a>.</>}
+          </p>
         </div>
       ) : (
         <div class="row g-3">
