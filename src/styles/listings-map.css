@@ -5,13 +5,14 @@
 }
 
 @media (max-width: 991px) {
-  .lm-layout { grid-template-columns: 1fr; }
+  .lm-layout {
+    grid-template-columns: 1fr;
+    min-height: 0;            /* don't force full-viewport on mobile */
+  }
   .lm-layout .lm-map-col {
     order: -1;                /* map appears above the sidebar on mobile */
+    position: relative;       /* scroll with the page — not sticky */
     height: 55vh;
-    position: sticky;
-    top: 0;
-    z-index: 1;
   }
   .lm-layout .lm-sidebar-col { order: 1; }
 }
@@ -33,7 +34,7 @@
 
 @media (max-width: 991px) {
   #listingsMap { position: relative; height: 100%; }
-  .lm-sidebar-col { max-height: none; overflow-y: visible; }
+  .lm-sidebar-col { max-height: none; overflow-y: visible; padding-top: 1rem; }
 }
 
 .lm-card { transition: box-shadow 0.15s ease, transform 0.15s ease; cursor: pointer; }
