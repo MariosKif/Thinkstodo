@@ -38,10 +38,10 @@ const {
 
           <li class="parent-parent-menu-item"><a href="JavaScript:Void(0);" class="home-link">Listings<span class="submenu-indicator"></span></a>
             <ul class="nav-dropdown nav-submenu">
-              <li><a href="/grid-layout-03/" class="sub-menu-item">Grid Layouts</a></li>
-              <li><a href="/list-layout-04/" class="sub-menu-item">List Layouts</a></li>
-              <li><a href="/half-map-03/" class="sub-menu-item">Half Map Screen</a></li>
-              <li><a href="/single-listing-04/" class="sub-menu-item">Single Listings</a></li>
+              <li><a href="/listings/" class="sub-menu-item">Browse Listings</a></li>
+              <li><a href="/listings-grid/" class="sub-menu-item">Grid View</a></li>
+              <li><a href="/listings-map/" class="sub-menu-item">Map View</a></li>
+              {/* Removed: /listing/ gallery index — duplicate of the three above. The /listing/:slug detail route is still reachable by clicking any card. */}
             </ul>
           </li>
 
@@ -51,10 +51,10 @@ const {
               <li><a href="/dashboard-my-profile/" class="sub-menu-item"><i class="bi bi-person-lines-fill me-1"></i>My Profile</a></li>
               <li><a href="/dashboard-my-bookings/" class="sub-menu-item"><i class="bi bi-journal-check me-1"></i>My Bookings</a></li>
               <li><a href="/dashboard-my-listings/" class="sub-menu-item"><i class="bi bi-ui-radios-grid me-1"></i>My Listings</a></li>
-              <li><a href="/dashboard-bookmarks/" class="sub-menu-item"><i class="bi bi-bookmark-star me-1"></i>Bookmarkes</a></li>
-              <li><a href="/dashboard-messages/" class="sub-menu-item"><i class="bi bi-chat-dots me-1"></i>Messages</a></li>
+              <li><a href="/dashboard-bookmarks/" class="sub-menu-item"><i class="bi bi-bookmark-star me-1"></i>Bookmarks</a></li>
+              {/* <li><a href="/dashboard-messages/" class="sub-menu-item"><i class="bi bi-chat-dots me-1"></i>Messages</a></li> -- hidden in MVP */}
               <li><a href="/dashboard-reviews/" class="sub-menu-item"><i class="bi bi-yelp me-1"></i>Reviews</a></li>
-              <li><a href="/dashboard-wallet/" class="sub-menu-item"><i class="bi bi-wallet me-1"></i>Wallet</a></li>
+              {/* <li><a href="/dashboard-wallet/" class="sub-menu-item"><i class="bi bi-wallet me-1"></i>Wallet</a></li> -- hidden in MVP */}
               <li><a href="/dashboard-add-listing/" class="sub-menu-item"><i class="bi bi-patch-plus me-1"></i>Add Listing</a></li>
             </ul>
           </li>
@@ -69,13 +69,7 @@ const {
                   <li><a href="/two-factor-auth/" class="sub-menu-item"><i class="bi bi-shield-check me-1"></i>Two Step verification</a></li>
                 </ul>
               </li>
-              <li class="parent-menu-item"><a href="JavaScript:Void(0);"><i class="bi bi-shop me-1"></i>Shop<span class="submenu-indicator"></span></a>
-                <ul class="nav-dropdown nav-submenu">
-                  <li><a href="/checkout-page/" class="sub-menu-item"><i class="bi bi-cart-check me-1"></i>Checkout</a></li>
-                  <li><a href="/invoice-page/" class="sub-menu-item"><i class="bi bi-receipt me-1"></i>Invoice</a></li>
-                  <li><a href="/success-payment/" class="sub-menu-item"><i class="bi bi-credit-card me-1"></i>Success Payment</a></li>
-                </ul>
-              </li>
+              {/* Shop submenu (Checkout / Invoice / Success Payment) hidden in MVP — booking-page handles the checkout flow. */}
               <li><a href="/author-profile/" class="sub-menu-item"><i class="bi bi-person-vcard me-1"></i>Author Profile</a></li>
               <li><a href="/booking-page/" class="sub-menu-item"><i class="bi bi-calendar2-check me-1"></i>Booking Page</a></li>
               <li><a href="/about-us/" class="sub-menu-item"><i class="bi bi-person-check me-1"></i>About Us</a></li>

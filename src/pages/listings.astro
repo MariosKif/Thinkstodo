@@ -245,13 +245,13 @@ const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').repla
 		    <div class="col">
 		        <ul class="nav nav-pills nav-fill gap-2 small d-inline-flex lightprimary border rounded-pill p-1 float-end">
 		          <li class="nav-item" role="presentation">
-		            <a href="/list-layout-04/" class="nav-link rounded-pill active" id="buy1" aria-selected="true"><i class="bi bi-list me-2"></i>List</a>
+		            <a href="/listings/" class="nav-link rounded-pill active" id="buy1" aria-selected="true"><i class="bi bi-list me-2"></i>List</a>
 		          </li>
 		          <li class="nav-item" role="presentation">
-		            <a href="/grid-layout-03/" class="nav-link rounded-pill" id="rent1" aria-selected="false"><i class="bi bi-ui-radios-grid me-2"></i>Grid</a>
+		            <a href="/listings-grid/" class="nav-link rounded-pill" id="rent1" aria-selected="false"><i class="bi bi-ui-radios-grid me-2"></i>Grid</a>
 		          </li>
 		          <li class="nav-item" role="presentation">
-		            <a href="/half-map-03/" class="nav-link rounded-pill" id="mapv1" aria-selected="false"><i class="bi bi-geo-alt me-2"></i>Map</a>
+		            <a href="/listings-map/" class="nav-link rounded-pill" id="mapv1" aria-selected="false"><i class="bi bi-geo-alt me-2"></i>Map</a>
 		          </li>
 		        </ul>
 		    </div>
@@ -346,7 +346,7 @@ const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').repla
 			                                    )}
 
 			                                </div>
-			                                <h5 class="listItemtitle"><a href={`/single-listing-04/${slugify(item.title)}/`}>{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h5>
+			                                <h5 class="listItemtitle"><a href={`/listing/${slugify(item.title)}/`}>{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h5>
 			                                <div class="d-flex align-items-center justify-content-start flex-wrap gap-3">
 			                                    <div class="flex-start"><div class="list-location text-muted"><span><i class="fa-solid fa-location-dot me-2"></i>{item.location}</span></div></div>
 			                                    <div class="flex-last">

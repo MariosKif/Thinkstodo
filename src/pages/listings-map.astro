@@ -38,7 +38,7 @@ function slugify(s: string): string {
 			<div class="filterOption-02 mb-3">
 
 				<!-- Components/Listings/Half-Map-Screen/half-map-01/single-filter.html -->
-				<form action="/half-map-03/" method="get" class="row align-items-start justify-content-center g-3">
+				<form action="/listings-map/" method="get" class="row align-items-start justify-content-center g-3">
 				    <div class="col-xl-5 col-lg-5 col-md-5">
 				        <div class="form-group position-relative mb-0">
 				            <input type="search" name="q" class="form-control fw-medium ps-5" placeholder="What you are looking for?">
@@ -333,7 +333,7 @@ function slugify(s: string): string {
 			<!-- All Listing Lits -->
 			<div class="row align-items-center justify-content-center g-xl-4 g-3">
 
-				<!-- Components/Listings/Half-Map-Screen/half-map-03/listings13.html -->
+				<!-- Components/Listings/Half-Map-Screen/listings-map/listings13.html -->
 				{listings7.map((item) => (
 				<div class="col-xl-6 col-lg-12 col-md-6 col-sm-12 col-12">
 				    <div class="listingitem-container">
@@ -362,7 +362,7 @@ function slugify(s: string): string {
 				                    <a href="#" class="avatarImg"><img src={item.img1} class="img-fluid circle" alt="Avatar"></a>
 				                </div>
 				                <div class="listing-details">
-				                    <h4 class="listingTitle"><a href={`/single-listing-04/${slugify(item.title)}/`} class="titleLink">{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h4>
+				                    <h4 class="listingTitle"><a href={`/listing/${slugify(item.title)}/`} class="titleLink">{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h4>
 				                    <p>{item.desc}</p>
 				                </div>
 				                <div class="listing-info-details">

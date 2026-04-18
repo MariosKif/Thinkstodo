@@ -13,12 +13,15 @@ function slugify(s: string): string {
 }
 
 export async function getStaticPaths() {
-  const { events } = await import('../../lib/data/context');
+  // Phase 0 bridge: drive detail pages from the same `listings` array the browse pages use,
+  // so clicking any listing card lands on a working detail page. Phase 3 replaces this with
+  // a Supabase fetch and switches to SSR (prerender = false).
+  const { listings } = await import('../../lib/data/context');
   const slugifyFn = (s: string) =>
     s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  return events.map((event) => ({
-    params: { slug: (event as any).slug || slugifyFn((event as any).title) },
-    props: { event },
+  return listings.map((listing) => ({
+    params: { slug: (listing as any).slug || slugifyFn((listing as any).title) },
+    props: { event: listing },
   }));
 }
 
@@ -36,7 +39,7 @@ const heroImg = event.img || '/assets/img/single-4.jpg';
 <section class="bg-cover position-relative ht-500 py-0" style={`background:url(${heroImg})no-repeat;`} data-overlay="4">
 	<div class="container h-100">
 
-		<!-- Components/Listings/Single-Listings/single-listing-04/gallery7.html -->
+		<!-- Components/Listings/Single-Listings/listing/gallery7.html -->
 		<!-- Gallery Pert -->
 		<div class="row align-items-start">
 		    <div class="col-xl-12 col-lg-12 col-md-12 col-12">
@@ -98,7 +101,7 @@ const heroImg = event.img || '/assets/img/single-4.jpg';
 				<!-- Detail Row -->
 				<div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
 
-					<!-- Components/Listings/Single-Listings/single-listing-04/description2.html -->
+					<!-- Components/Listings/Single-Listings/listing/description2.html -->
 					<!-- Description -->
 					<div class="listingSingleblock mb-4">
 					    <div class="SingleblockHeader">
@@ -358,7 +361,7 @@ const heroImg = event.img || '/assets/img/single-4.jpg';
 									                            <a href="#" class="avatarImg"><img src={item.img1} class="img-fluid circle" alt="Avatar"></a>
 									                        </div>
 									                        <div class="listing-details">
-									                            <h4 class="listingTitle"><a href={`/single-listing-04/${slugify(item.title)}/`} class="titleLink">{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h4>
+									                            <h4 class="listingTitle"><a href={`/listing/${slugify(item.title)}/`} class="titleLink">{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h4>
 									                            <div class="list-infos">
 									                                <div class="d-flex align-items-center justify-content-start gap-3 mt-1">
 									                                    <div class="list-distance text-light"><i class="bi bi-geo-alt mb-0 me-2"></i>{item.location}</div>

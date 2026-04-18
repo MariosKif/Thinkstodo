@@ -38,7 +38,7 @@ function slugify(s: string): string {
                   <span class={event.color}>{event.name}</span>
                 )}
                 <h5 class="card-title mt-2">
-                  <a href={`/single-listing-04/${event.slug || slugify(event.title)}/`}>
+                  <a href={`/listing/${event.slug || slugify(event.title)}/`}>
                     {event.title}
                   </a>
                 </h5>

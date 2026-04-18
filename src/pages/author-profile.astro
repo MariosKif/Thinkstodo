@@ -135,7 +135,7 @@ function slugify(s: string): string {
                                     )}
 
                                   </div>
-                                  <h5 class="listItemtitle"><a href={`/single-listing-04/${(item as any).slug || slugify(item.title)}/`}>{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h5>
+                                  <h5 class="listItemtitle"><a href={`/listing/${(item as any).slug || slugify(item.title)}/`}>{item.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></a></h5>
                                   <div class="d-flex align-items-center justify-content-start flex-wrap gap-3">
                                     <div class="flex-start"><div class="list-location text-muted"><span><i class="fa-solid fa-location-dot me-2"></i>{item.location}</span></div></div>
                                     <div class="flex-last">
