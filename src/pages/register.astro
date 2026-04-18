@@ -1,5 +1,12 @@
 ---
 import NoHeader from '../layouts/NoHeader.astro';
+export const prerender = false;
+
+const error = Astro.url.searchParams.get('error');
+
+if (Astro.locals.user) {
+  return Astro.redirect('/dashboard-user/');
+}
 ---
 <NoHeader title="Register - ThinksToDo">
 
@@ -29,19 +36,27 @@ import NoHeader from '../layouts/NoHeader.astro';
 									<!-- Title -->
 									<div class="text-center"><h1 class="mb-2 fs-2">Create An Account!</h1></div>
 
+									{error && (
+										<div class="alert alert-danger mt-3 mb-0" role="alert">{error}</div>
+									)}
+
 									<!-- Form START -->
-									<form class="mt-5 text-start" action="/dashboard-user/" method="get">
+									<form class="mt-5 text-start" action="/api/auth/signup" method="post">
 
 										<div class="form mb-5">
 											<div class="form-group">
-												<label class="form-label">User or Email</label>
-												<input type="email" class="form-control" placeholder="name@example.com">
+												<label class="form-label">Full Name</label>
+												<input type="text" name="full_name" class="form-control" placeholder="Jane Doe" autocomplete="name">
 											</div>
 											<div class="form-group">
-												<label class="form-label">Enter Password</label>
+												<label class="form-label">Email</label>
+												<input type="email" name="email" class="form-control" placeholder="name@example.com" required autocomplete="email">
+											</div>
+											<div class="form-group">
+												<label class="form-label">Password</label>
 												<div class="position-relative">
 													<input type="password" class="form-control" id="password-field" name="password"
-														placeholder="Password">
+														placeholder="At least 8 characters" minlength="8" required autocomplete="new-password">
 													<span
 														class="fa-solid fa-eye toggle-password position-absolute top-50 end-0 translate-middle-y me-3"></span>
 												</div>
@@ -49,7 +64,7 @@ import NoHeader from '../layouts/NoHeader.astro';
 
 											<div class="form-group">
 												<label class="form-label">Confirm Password</label>
-												<input type="password" class="form-control" placeholder="*********">
+												<input type="password" name="confirm_password" class="form-control" placeholder="Repeat password" minlength="8" required autocomplete="new-password">
 											</div>
 
 											<div class="form-group mb-4">

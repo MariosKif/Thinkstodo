@@ -13,6 +13,11 @@ const {
   logo = '/assets/img/logo.svg',
   addListingLight = false,
 } = Astro.props;
+
+const user = Astro.locals?.user ?? null;
+const userLabel = user
+  ? ((user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'Account')
+  : null;
 ---
 <!-- Start Navigation -->
 <div class={headerClass} data-sticky-element="">
@@ -90,12 +95,37 @@ const {
         </ul>
 
         <ul class="nav-menu nav-menu-social align-to-right">
-          <li>
-            <a href="#" class="d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#login"><i class="bi bi-person-circle fs-6 me-1"></i><span class="navCl">SignUp or SignIn</span></a>
-          </li>
-          <li class={`list-buttons${addListingLight ? ' light' : ''}`}>
-            <a href="/register/"><i class="bi bi-geo-alt fs-6 me-1"></i>Add Listing</a>
-          </li>
+          {user ? (
+            <>
+              <li class="parent-parent-menu-item">
+                <a href="JavaScript:Void(0);" class="home-link d-flex align-items-center"><i class="bi bi-person-circle fs-6 me-1"></i><span class="navCl">{userLabel}</span><span class="submenu-indicator"></span></a>
+                <ul class="nav-dropdown nav-submenu">
+                  <li><a href="/dashboard-user/" class="sub-menu-item"><i class="bi bi-speedometer me-1"></i>Dashboard</a></li>
+                  <li><a href="/dashboard-my-profile/" class="sub-menu-item"><i class="bi bi-person-lines-fill me-1"></i>My Profile</a></li>
+                  <li><a href="/dashboard-my-listings/" class="sub-menu-item"><i class="bi bi-ui-radios-grid me-1"></i>My Listings</a></li>
+                  <li><a href="/dashboard-my-bookings/" class="sub-menu-item"><i class="bi bi-journal-check me-1"></i>My Bookings</a></li>
+                  <li><a href="/dashboard-bookmarks/" class="sub-menu-item"><i class="bi bi-bookmark-star me-1"></i>Bookmarks</a></li>
+                  <li>
+                    <form action="/api/auth/signout" method="post" style="display:inline;">
+                      <button type="submit" class="sub-menu-item bg-transparent border-0 text-start w-100" style="padding: inherit; color: inherit; font: inherit; cursor: pointer;"><i class="bi bi-box-arrow-right me-1"></i>Sign Out</button>
+                    </form>
+                  </li>
+                </ul>
+              </li>
+              <li class={`list-buttons${addListingLight ? ' light' : ''}`}>
+                <a href="/dashboard-add-listing/"><i class="bi bi-geo-alt fs-6 me-1"></i>Add Listing</a>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <a href="#" class="d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#login"><i class="bi bi-person-circle fs-6 me-1"></i><span class="navCl">Sign In</span></a>
+              </li>
+              <li class={`list-buttons${addListingLight ? ' light' : ''}`}>
+                <a href="/register/"><i class="bi bi-geo-alt fs-6 me-1"></i>Add Listing</a>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </nav>

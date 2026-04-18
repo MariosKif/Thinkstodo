@@ -7,6 +7,7 @@ import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
 import { bookings } from '../lib/data/context';
+export const prerender = false;
 ---
 <Base title="My Bookings - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />

@@ -17,20 +17,12 @@
 				<!-- End Heading -->
 
 				<!-- Form -->
-				<form class="needs-validation px-lg-2" novalidate>
-
-					<!-- Form -->
-					<div class="row align-items-center justify-content-between g-3 mb-4">
-						<div class="col-xl-6 col-lg-6 col-md-6"><a href="#" class="btn btn-outline-secondary border rounded-3 text-md px-lg-2 full-width"><img src="/assets/img/google.png" class="img-fluid me-2" width="16" alt="">Login with Google</a></div>
-						<div class="col-xl-6 col-lg-6 col-md-6"><a href="#" class="btn btn-outline-secondary border rounded-3 text-md px-lg-2 full-width"><img src="/assets/img/facebook.png" class="img-fluid me-2" width="16" alt="">Login with Facebook</a></div>
-					</div>
-					<!-- End Form -->
+				<form class="px-lg-2" action="/api/auth/signin" method="post">
 
 					<!-- Form -->
 					<div class="mb-4">
 						<label class="form-label" for="email01">Your email</label>
-						<input type="email" class="form-control" id="email01" placeholder="email@site.com" required>
-						<span class="invalid-feedback">Please enter a valid email address.</span>
+						<input type="email" name="email" class="form-control" id="email01" placeholder="email@site.com" required autocomplete="email">
 					</div>
 					<!-- End Form -->
 
@@ -42,10 +34,8 @@
 						</div>
 
 						<div class="input-group-merge">
-							<input type="password" class="form-control" id="pass01" placeholder="8+ characters required" required>
+							<input type="password" name="password" class="form-control" id="pass01" placeholder="8+ characters required" required autocomplete="current-password">
 						</div>
-
-						<span class="invalid-feedback">Please enter a valid password.</span>
 					</div>
 					<!-- End Form -->
 

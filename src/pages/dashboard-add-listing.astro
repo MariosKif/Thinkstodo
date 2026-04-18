@@ -9,6 +9,7 @@ import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
 import { gallerys5, timings, features2 } from '../lib/data/context';
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+export const prerender = false;
 ---
 <Base title="Add Listing - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />

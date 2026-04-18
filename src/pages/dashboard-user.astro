@@ -7,6 +7,10 @@ import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
 import { rows, messages, invoices } from '../lib/data/context';
+export const prerender = false;
+
+const user = Astro.locals.user!;
+const fullName = (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'there';
 ---
 <Base title="Dashboard - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />
@@ -29,7 +33,7 @@ import { rows, messages, invoices } from '../lib/data/context';
 
             <!-- Dashboard Title -->
             <div class="dashHeader p-xl-5 p-4 pb-xl-0 pb-0">
-              <h2 class="fw-medium mb-0">Hello, Shreethemes</h2>
+              <h2 class="fw-medium mb-0">Hello, {fullName}</h2>
             </div>
 
             <!-- Dashboard Details -->
