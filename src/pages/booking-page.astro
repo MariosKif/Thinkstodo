@@ -6,318 +6,202 @@ import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
+import { getListingBySlug } from '../lib/supabase/listings';
+
+export const prerender = false;
+
+const supabase = Astro.locals.supabase;
+const user = Astro.locals.user;
+const listingId = Astro.url.searchParams.get('listing_id') ?? '';
+const listingSlug = Astro.url.searchParams.get('slug') ?? '';
+const error = Astro.url.searchParams.get('error');
+
+// Resolve the listing either by explicit id or by slug in the URL.
+let listing: any = null;
+if (supabase && listingSlug) {
+  const res = await getListingBySlug(supabase, listingSlug);
+  if (res) listing = res.card;
+}
+if (!listing && supabase && listingId) {
+  const { data } = await supabase
+    .from('listings')
+    .select('id, slug, title, city, address, phone, rating, review_count, hero_image, status, listing_images(url)')
+    .eq('id', listingId)
+    .maybeSingle();
+  if (data) {
+    listing = {
+      id: data.id,
+      slug: data.slug,
+      title: data.title,
+      city: data.city,
+      address: data.address,
+      phone: data.phone,
+      rating: data.rating ?? 4.5,
+      reviews: `${data.review_count ?? 0} Reviews`,
+      img: data.hero_image || data.listing_images?.[0]?.url || '/assets/img/list-1.jpg',
+    };
+  }
+}
+
+// Sensible default values for the form.
+const userFullName = (user?.user_metadata?.full_name as string) || '';
+const [defaultFirstName, ...rest] = userFullName.split(' ');
+const defaultLastName = rest.join(' ');
+const defaultEmail = user?.email ?? '';
 ---
 <Base title="Booking - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />
 
-<Preloader />
+  <Preloader />
 
-<div class="clearfix"></div>
+  <div class="clearfix"></div>
 
-<!-- Page Title Start -->
-<section class="bg-light">
-	<div class="container">
+  <section class="bg-light">
+    <div class="container">
+      <div class="row justify-content-start align-items-center pt-lg-0 pt-5">
+        <div class="col-xl-7 col-lg-9 col-md-12 col-sm-12">
+          <div class="position-relative">
+            <h1 class="xl-heading">Booking</h1>
+            <nav id="breadcrumbs" class="breadcrumbs">
+              <ul>
+                <li><a href="/">Home</a></li>
+                {listing && <li><a href={`/listing/${listing.slug}/`}>{listing.title}</a></li>}
+                <li>Booking</li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-		<!-- Search Form -->
-		<div class="row justify-content-start align-items-center pt-lg-0 pt-5">
-			<div class="col-xl-7 col-lg-9 col-md-12 col-sm-12">
-				<div class="position-relative">
-					<h1 class="xl-heading">Booking</h1>
-					<nav id="breadcrumbs" class="breadcrumbs">
-						<ul>
-							<li><a href="/">Home</a></li>
-							<li>Booking Page</li>
-						</ul>
-					</nav>
-				</div>
-			</div>
-		</div>
-		<!-- </row> -->
+  <section>
+    <div class="container">
+      {!listing ? (
+        <div class="alert alert-warning">
+          <p class="mb-2">No listing selected.</p>
+          <a href="/listings/" class="btn btn-primary rounded-pill">Browse Listings</a>
+        </div>
+      ) : !user ? (
+        <div class="alert alert-info">
+          <p class="mb-2">Please sign in to continue with your booking.</p>
+          <a href={`/login/?next=${encodeURIComponent(`/booking-page/?slug=${listing.slug}`)}`} class="btn btn-primary rounded-pill">Sign In</a>
+        </div>
+      ) : (
+        <form action="/api/bookings" method="post" class="row form-submit">
+          <input type="hidden" name="listing_id" value={listing.id} />
 
-	</div>
-</section>
-<!-- Page Title End -->
+          {error && (
+            <div class="col-12"><div class="alert alert-danger">{error}</div></div>
+          )}
 
-<!-- Checkout Details Start -->
-<section>
+          <div class="col-lg-8 col-md-12 col-sm-12">
+            <div class="submit-page">
+              <div class="row">
+                <div class="col-12 mb-4">
+                  <h3 class="fw-medium">Your Details</h3>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                  <div class="form-group">
+                    <label>First Name<i class="req">*</i></label>
+                    <input type="text" name="first_name" value={defaultFirstName} required class="form-control">
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                  <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" name="last_name" value={defaultLastName} class="form-control">
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                  <div class="form-group">
+                    <label>Email<i class="req">*</i></label>
+                    <input type="email" name="email" value={defaultEmail} required class="form-control">
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                  <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" name="phone" class="form-control">
+                  </div>
+                </div>
+              </div>
 
-	<div class="container">
+              <div class="row mt-4">
+                <div class="col-12 mb-3">
+                  <h3 class="fw-medium">Visit Details</h3>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                  <div class="form-group">
+                    <label>Date<i class="req">*</i></label>
+                    <input type="date" name="start_date" required class="form-control">
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                  <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" name="end_date" class="form-control">
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                  <div class="form-group">
+                    <label>Guests</label>
+                    <input type="number" name="guests" min="1" value="1" class="form-control">
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-group">
+                    <label>Notes</label>
+                    <textarea name="notes" rows="3" class="form-control" placeholder="Anything the host should know?"></textarea>
+                  </div>
+                </div>
+              </div>
 
-		<!-- row Start -->
-		<div class="row form-submit">
-			<div class="col-lg-8 col-md-12 col-sm-12">
+              <div class="row mt-4">
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary fw-medium rounded-pill w-100">Request Booking</button>
+                  <p class="text-muted text-sm mt-2 mb-0">No payment is charged now — the host will confirm your request.</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-				<!-- row -->
-				<div class="row m-0">
-					<div class="submit-page">
-						<div class="row">
+          <div class="col-lg-4 col-md-12 col-sm-12">
+            <div class="paymensSidebar bg-light rounded-3 p-4">
+              <div class="paymentPagewrap">
+                <div class="paymentPage">
+                  <div class="bookingList">
+                    <img src={listing.img} class="img-fluid" alt={listing.title}>
+                    <div class="listing-details">
+                      <h5>{listing.title}<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></h5>
+                      <div class="list-ratings">
+                        <div class="d-flex align-items-center justify-content-start gap-2">
+                          <span class="d-flex align-items-center justify-content-start gap-1 text-sm">
+                            <i class="bi bi-star-fill mb-0 text-warning"></i>
+                            <span>{listing.rating}</span>
+                          </span>
+                          <span class="text-md">({listing.reviews})</span>
+                        </div>
+                      </div>
+                      {listing.city && <p class="text-md text-muted mb-0 mt-1"><i class="bi bi-geo-alt me-1"></i>{listing.city}</p>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      )}
+    </div>
+  </section>
 
-							<div class="col-lg-12 col-md-12 col-sm-12 mb-4">
-								<h3 class="fw-medium">Personal Details</h3>
-							</div>
+  <section class="bg-cover bg-primary-2 position-relative py-5" style="background:url(/assets/img/brand-section.png)no-repeat;">
+    <div class="container">
+      <Subscribe />
+    </div>
+  </section>
 
-							<!-- Components/Pages/booking-page/details.html -->
-							<div class="col-lg-6 col-md-6 col-sm-12">
-							    <div class="form-group">
-							        <label>First Name<i class="req">*</i></label>
-							        <input type="text" class="form-control">
-							    </div>
-							</div>
-
-							<div class="col-lg-6 col-md-6 col-sm-12">
-							    <div class="form-group">
-							        <label>Last Name<i class="req">*</i></label>
-							        <input type="text" class="form-control">
-							    </div>
-							</div>
-
-							<div class="col-lg-6 col-md-6 col-sm-12">
-							    <div class="form-group">
-							        <label>Your Email<i class="req">*</i></label>
-							        <input type="email" class="form-control">
-							    </div>
-							</div>
-
-							<div class="col-lg-6 col-md-6 col-sm-12">
-							    <div class="form-group">
-							        <label>Contact<i class="req">*</i></label>
-							        <input type="text" class="form-control">
-							    </div>
-							</div>
-
-						</div>
-					</div>
-				</div>
-				<!--/row -->
-
-				<!-- Payment Methode -->
-				<div class="row align-items-start justify-content-start mt-4 g-2">
-
-					<div class="col-lg-12 col-md-12 col-sm-12 mb-2">
-						<h3 class="fw-medium">Payment Methods</h3>
-					</div>
-
-					<div class="col-xl-12 col-lg-12 col-md-12 col-12">
-
-						<!-- Components/Pages/booking-page/payment.html -->
-						<div class="accordion accordion-flush" id="paymentFlushExample">
-						    <div class="accordion-item border">
-						        <h2 class="accordion-header rounded-2">
-						            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-paypal" aria-expanded="false" aria-controls="flush-paypal">
-						                Pay Via PayPal
-						            </button>
-						        </h2>
-						        <div id="flush-paypal" class="accordion-collapse collapse show" data-bs-parent="#paymentFlushExample">
-						            <div class="accordion-body">
-						                <form>
-						                    <div class="form-group">
-						                        <label>PayPal Email</label>
-						                        <input type="text" class="form-control simple" placeholder="paypal@gmail.com">
-						                    </div>
-						                </form>
-						            </div>
-						        </div>
-						    </div>
-						    <div class="accordion-item border rounded-2">
-						        <h2 class="accordion-header">
-						            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-stripe" aria-expanded="false" aria-controls="flush-stripe">
-						                Pay Via Stripe
-						            </button>
-						        </h2>
-						        <div id="flush-stripe" class="accordion-collapse collapse" data-bs-parent="#paymentFlushExample">
-						            <div class="accordion-body">
-						                <form>
-
-						                    <div class="row">
-						                        <div class="col-lg-6 col-md-6 col-sm-12">
-						                            <div class="form-group">
-						                                <label>Card Holder Name</label>
-						                                <input type="text" class="form-control">
-						                            </div>
-						                        </div>
-
-						                        <div class="col-lg-6 col-md-6 col-sm-12">
-						                            <div class="form-group">
-						                                <label>Card Number</label>
-						                                <input type="text" class="form-control">
-						                            </div>
-						                        </div>
-
-						                        <div class="col-lg-5 col-md-5 col-sm-6">
-						                            <div class="form-group">
-						                                <label>Expire Month</label>
-						                                <input type="text" class="form-control">
-						                            </div>
-						                        </div>
-
-						                        <div class="col-lg-5 col-md-5 col-sm-6">
-						                            <div class="form-group">
-						                                <label>Expire Year</label>
-						                                <input type="text" class="form-control">
-						                            </div>
-						                        </div>
-
-						                        <div class="col-lg-2 col-md-2 col-sm-12">
-						                            <div class="form-group">
-						                                <label>CVC</label>
-						                                <input type="text" class="form-control">
-						                            </div>
-						                        </div>
-
-						                        <div class="col-lg-6 col-md-6 col-sm-12">
-						                            <div class="form-check mb-3">
-						                                <input id="stripes" class="form-check-input" name="stripes" type="checkbox">
-						                                <label for="stripes" class="form-check-label">By Continuing, you ar'e agree to conditions</label>
-						                            </div>
-						                        </div>
-
-						                    </div>
-
-						                </form>
-						            </div>
-						        </div>
-						    </div>
-						    <div class="accordion-item border rounded-2">
-						        <h2 class="accordion-header">
-						            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-creditcard" aria-expanded="false" aria-controls="flush-creditcard">
-						                Pay Via Dabit/Credit Card
-						            </button>
-						        </h2>
-						        <div id="flush-creditcard" class="accordion-collapse collapse" data-bs-parent="#paymentFlushExample">
-						            <div class="accordion-body">
-						                <form>
-
-						                    <div class="row">
-						                        <div class="col-lg-6 col-md-6 col-sm-12">
-						                            <div class="form-group">
-						                                <label>Card Holder Name</label>
-						                                <input type="text" class="form-control">
-						                            </div>
-						                        </div>
-
-						                        <div class="col-lg-6 col-md-6 col-sm-12">
-						                            <div class="form-group">
-						                                <label>Card Number</label>
-						                                <input type="text" class="form-control">
-						                            </div>
-						                        </div>
-
-						                        <div class="col-lg-5 col-md-5 col-sm-6">
-						                            <div class="form-group">
-						                                <label>Expire Month</label>
-						                                <input type="text" class="form-control">
-						                            </div>
-						                        </div>
-
-						                        <div class="col-lg-5 col-md-5 col-sm-6">
-						                            <div class="form-group">
-						                                <label>Expire Year</label>
-						                                <input type="text" class="form-control">
-						                            </div>
-						                        </div>
-
-						                        <div class="col-lg-2 col-md-2 col-sm-12">
-						                            <div class="form-group">
-						                                <label>CVC</label>
-						                                <input type="text" class="form-control">
-						                            </div>
-						                        </div>
-
-						                        <div class="col-lg-6 col-md-6 col-sm-12">
-						                            <div class="form-check mb-3">
-						                                <input id="credits" class="form-check-input" name="credits" type="checkbox">
-						                                <label for="credits" class="form-check-label">By Continuing, you ar'e agree to conditions</label>
-						                            </div>
-						                        </div>
-
-						                    </div>
-
-						                </form>
-						            </div>
-						        </div>
-						    </div>
-						</div>
-
-					</div>
-
-					<div class="col-xl-12 col-lg-12 col-md-12 col-12">
-						<div class="form-group m-0">
-							<a href="/success-payment/" class="btn btn-primary fw-medium rounded-pill w-100">Proceed & Pay</a>
-						</div>
-					</div>
-
-				</div>
-
-			</div>
-
-			<!-- Col-lg 4 -->
-			<div class="col-lg-4 col-md-12 col-sm-12">
-
-				<div class="paymensSidebar bg-light rounded-3 p-4">
-
-					<!-- Components/Pages/booking-page/booking.html -->
-					<div class="paymentPagewrap">
-					    <div class="paymentPage">
-					        <div class="bookingList">
-					            <img src="/assets/img/list-4.jpg" class="img-fluid" alt="Listing Image">
-					            <div class="listing-details">
-					                <h5>The Blue Ley Light<span class="verified"><i class="bi bi-patch-check-fill m-0"></i></span></h5>
-					                <div class="list-ratings">
-					                    <div class="d-flex align-items-center justify-content-start gap-2">
-					                        <span class="d-flex align-items-center justify-content-start gap-1 text-sm">
-					                            <i class="bi bi-star-fill mb-0 text-warning"></i><i class="bi bi-star-fill mb-0 text-warning"></i><i class="bi bi-star-fill mb-0 text-warning"></i><i class="bi bi-star-fill mb-0 text-warning"></i><i class="bi bi-star-half mb-0 text-warning"></i>
-					                        </span>
-					                        <span class="text-md text-light">(86 Reviews)</span>
-					                    </div>
-					                </div>
-					            </div>
-					        </div>
-					    </div>
-
-					    <div class="booking-info-try rounded mt-4">
-					        <ul class="p-0 m-0">
-					            <li class="d-flex align-items-center justify-content-between my-2"><span class="text-dark fw-medium">Booking Date</span><span class="fw-medium text-muted">Sep 6 2025</span></li>
-					            <li class="d-flex align-items-center justify-content-between my-2"><span class="text-dark fw-medium">Time</span><span class="fw-medium text-muted">10:50 AM</span></li>
-					            <li class="d-flex align-items-center justify-content-between my-2"><span class="text-dark fw-medium">Guests</span><span class="fw-medium text-muted">02 Adults, 0 Child</span></li>
-					            <li class="d-flex align-items-center justify-content-between my-2"><span class="text-dark fw-medium">Discount</span><span class="fw-medium text-danger">-$12.10</span></li>
-					            <li class="d-flex align-items-center justify-content-between"><span class="text-dark fw-medium">Total</span><span class="fw-semibold text-success">$298.76</span></li>
-					        </ul>
-					    </div>
-					</div>
-
-				</div>
-
-			</div>
-			<!-- /col-lg-4 -->
-
-		</div>
-		<!-- /row -->
-
-	</div>
-
-</section>
-<!-- Checkout Details End -->
-
-<!-- Call To Action Start -->
-<section class="bg-cover bg-primary-2 position-relative py-5" style="background:url(/assets/img/brand-section.png)no-repeat;">
-	<div class="container">
-
-		<!-- Components/Home/index/subscribe.html -->
-		<Subscribe />
-
-	</div>
-</section>
-<!-- Call To Action Start -->
-
-
-	<!-- Components/Home/index/log.html -->
-	<LoginModal />
-
-
-	<!-- Components/Home/index/cart.html -->
-	<!-- Components/Home/index/search.html -->
-	<SearchOffcanvas />
-
-
-	<Footer />
+  <LoginModal />
+  <SearchOffcanvas />
+  <Footer />
 </Base>

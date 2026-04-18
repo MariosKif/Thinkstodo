@@ -6,8 +6,30 @@ import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
-import { reviews2 } from '../lib/data/context';
 export const prerender = false;
+
+const user = Astro.locals.user!;
+const supabase = Astro.locals.supabase;
+
+const { data: rows } = supabase
+  ? await supabase
+      .from('reviews')
+      .select('id, rating, body, created_at, listings(title, slug, hero_image, listing_images(url))')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+  : { data: [] };
+
+const reviews2 = (rows ?? []).map((r: any) => ({
+  id: r.id,
+  img: r.listings?.hero_image || r.listings?.listing_images?.[0]?.url || '/assets/img/team-6.jpg',
+  title: 'Your review on',
+  on: 'for',
+  name: r.listings?.title ?? 'Removed listing',
+  slug: r.listings?.slug ?? null,
+  date: r.created_at ? new Date(r.created_at).toLocaleDateString() : '',
+  desc: r.body,
+  rating: r.rating,
+}));
 ---
 <Base title="Reviews - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />
@@ -44,52 +66,53 @@ export const prerender = false;
                       <h4 class="m-0">Reviews</h4>
                     </div>
                     <div class="card-body p-0">
-                      <ul class="dashboardListgroup hovereffect">
-
-                        <!-- Components/User-Dashboard/dashboard-reviews/reviews3.html -->
-                        {reviews2.map((item: any) => (
-                          <li>
-                            <div class="singleReviewswrap">
-                              <div class="singlereviews">
-                                <div class="reviewerAvatar">
-                                  <figure class="m-0">
-                                    <img src={item.img} class="img-fluid circle avatar-xl" alt="Avatar" />
-                                  </figure>
-                                </div>
-
-                                <div class="reviewsInfo">
-                                  <div class="reviewssupper d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
-                                    <div class="reviewsExtopper">
-                                      <div class="reviewrHeadline d-flex align-items-center justify-content-start gap-2">
-                                        <h6 class="messageuserTitle">{item.title}</h6> {item.on} <a href="#" class="fw-medium text-primary">{item.name}</a>
-                                      </div>
-                                      <div class="postedDate"><span class="text-md">{item.date}</span></div>
-                                    </div>
-                                    <div class="flxLast">
-                                      <div class="reviewsStar" data-rating="5">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-half"></i>
-                                      </div>
-                                    </div>
+                      {reviews2.length === 0 ? (
+                        <div class="p-4 text-center">
+                          <p class="text-muted mb-3">You haven't written any reviews yet.</p>
+                          <a href="/listings/" class="btn btn-primary rounded-pill fw-medium">Browse Listings</a>
+                        </div>
+                      ) : (
+                        <ul class="dashboardListgroup hovereffect">
+                          {reviews2.map((item) => (
+                            <li>
+                              <div class="singleReviewswrap">
+                                <div class="singlereviews">
+                                  <div class="reviewerAvatar">
+                                    <figure class="m-0">
+                                      <img src={item.img} class="img-fluid circle avatar-xl" alt={item.name} />
+                                    </figure>
                                   </div>
-                                  <div class="reviewsBody">
-                                    <div class="reviewDescription d-block mb-3">
-                                      <p class="m-0">{item.desc}</p>
+                                  <div class="reviewsInfo">
+                                    <div class="reviewssupper d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                                      <div class="reviewsExtopper">
+                                        <div class="reviewrHeadline d-flex align-items-center justify-content-start gap-2">
+                                          <h6 class="messageuserTitle">{item.title}</h6> {item.on}
+                                          {item.slug
+                                            ? <a href={`/listing/${item.slug}/`} class="fw-medium text-primary">{item.name}</a>
+                                            : <span class="fw-medium">{item.name}</span>}
+                                        </div>
+                                        <div class="postedDate"><span class="text-md">{item.date}</span></div>
+                                      </div>
+                                      <div class="flxLast">
+                                        <div class="d-flex align-items-center justify-content-start gap-1">
+                                          {Array.from({ length: 5 }).map((_, i) => (
+                                            <i class={`bi bi-star-fill ${i < item.rating ? 'text-warning' : 'text-muted'}`}></i>
+                                          ))}
+                                        </div>
+                                      </div>
                                     </div>
-                                    <div class="reviewreply">
-                                      <button type="button" class="btn btn-sm fw-medium btn-light-primary rounded-pill"  data-bs-toggle="modal" data-bs-target="#replyModal"><i class="bi bi-reply me-2"></i>Rply to this review</button>
+                                    <div class="reviewsBody">
+                                      <div class="reviewDescription d-block mb-3">
+                                        <p class="m-0">{item.desc}</p>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          </li>
-                        ))}
-
-                      </ul>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </div>
                 </div>

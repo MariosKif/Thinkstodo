@@ -6,8 +6,32 @@ import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar.astro';
-import { bookings } from '../lib/data/context';
 export const prerender = false;
+
+const user = Astro.locals.user!;
+const supabase = Astro.locals.supabase;
+
+const { data: bookingRows } = supabase
+  ? await supabase
+      .from('bookings')
+      .select('id, start_date, end_date, guests, status, total, contact_name, contact_phone, created_at, listings(id, title, slug, city, hero_image, listing_images(url))')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+  : { data: [] };
+
+const bookings = (bookingRows ?? []).map((b: any) => ({
+  id: b.id,
+  title: b.listings?.title ?? 'Listing removed',
+  slug: b.listings?.slug ?? null,
+  img: b.listings?.hero_image || b.listings?.listing_images?.[0]?.url || '/assets/img/list-1.jpg',
+  name: b.listings?.city ?? '',
+  date: b.start_date ?? '—',
+  info: `${b.guests} guest${b.guests === 1 ? '' : 's'}${b.end_date ? ` · until ${b.end_date}` : ''}`,
+  client: b.contact_name ?? '',
+  contact: b.contact_phone ?? '',
+  price: b.total ? `$${b.total}` : '—',
+  status: b.status ?? 'pending',
+}));
 ---
 <Base title="My Bookings - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />
@@ -44,83 +68,47 @@ export const prerender = false;
                       <h4 class="m-0">Recent Bookings</h4>
                     </div>
                     <div class="card-body p-0">
-                      <ul class="dashboardListgroup">
-
-                        <!-- Components/User-Dashboard/dashboard-my-bookings/bookings.html -->
-                        {bookings.map((item: any) => (
-                          <li>
-                            <div class="bookingActivities">
-                              <div class="d-flex align-items-start justify-content-start gap-3 flex-wrap">
-                                <div class="bookingAvatar">
-                                  <figure class="m-0"><img src={item.img} class="img-fluid circle avatar-xl" alt="Avatar" /></figure>
-                                </div>
-
-                                <div class="bookingInfo">
-                                  <div class="bookingTitle">
-                                    <h5 class="titlesName">{item.title}<span class="Bookscats">{item.name}</span></h5>
-                                    <div class="d-flex align-items-center justify-content-start gap-2">
-
-                                      {item.tag === 'one' && (
-                                        <>
-                                          <span class="badge badge-xs pending rounded-pill">Pending</span>
-                                          <span class="badge badge-xs unpaid rounded-pill">Unpaid</span>
-                                        </>
-                                      )}
-                                      {item.tag === 'two' && (
-                                        <span class="badge badge-xs approved rounded-pill">Approved</span>
-                                      )}
-                                      {item.tag === 'three' && (
-                                        <span class="badge badge-xs cancelled rounded-pill">Cancelled</span>
-                                      )}
-                                      {item.tag !== 'one' && item.tag !== 'two' && item.tag !== 'three' && (
-                                        <>
-                                          <span class="badge badge-xs approved rounded-pill">Approved</span>
-                                          <span class="badge badge-xs unpaid rounded-pill">Unpaid</span>
-                                        </>
-                                      )}
-
+                      {bookings.length === 0 ? (
+                        <div class="p-4 text-center">
+                          <p class="text-muted mb-3">You haven't booked any listings yet.</p>
+                          <a href="/listings/" class="btn btn-primary rounded-pill fw-medium">Browse Listings</a>
+                        </div>
+                      ) : (
+                        <ul class="dashboardListgroup">
+                          {bookings.map((item) => (
+                            <li>
+                              <div class="bookingActivities">
+                                <div class="d-flex align-items-start justify-content-start gap-3 flex-wrap">
+                                  <div class="bookingAvatar">
+                                    <figure class="m-0"><img src={item.img} class="img-fluid circle avatar-xl" alt={item.title} /></figure>
+                                  </div>
+                                  <div class="bookingInfo">
+                                    <div class="bookingTitle">
+                                      <h5 class="titlesName">
+                                        {item.slug ? <a href={`/listing/${item.slug}/`}>{item.title}</a> : item.title}
+                                        {item.name && <span class="Bookscats">{item.name}</span>}
+                                      </h5>
+                                      <div class="d-flex align-items-center justify-content-start gap-2">
+                                        {item.status === 'pending' && <span class="badge badge-xs pending rounded-pill">Pending</span>}
+                                        {item.status === 'confirmed' && <span class="badge badge-xs approved rounded-pill">Confirmed</span>}
+                                        {item.status === 'cancelled' && <span class="badge badge-xs cancelled rounded-pill">Cancelled</span>}
+                                        {item.status === 'completed' && <span class="badge badge-xs approved rounded-pill">Completed</span>}
+                                      </div>
+                                    </div>
+                                    <div class="bookingDetails">
+                                      <div class="singledetailInfo"><span class="listTitle">Date</span>{item.date}</div>
+                                      <div class="singledetailInfo"><span class="listTitle">Info</span>{item.info}</div>
+                                      <div class="singledetailInfo"><span class="listTitle">Name</span>{item.client || '—'}</div>
+                                      <div class="singledetailInfo"><span class="listTitle">Contact</span>{item.contact || '—'}</div>
+                                      <div class="singledetailInfo"><span class="listTitle">Total</span>{item.price}</div>
                                     </div>
                                   </div>
-                                  <div class="bookingDetails">
-                                    <div class="singledetailInfo"><span class="listTitle">Booking Date</span>{item.date}</div>
-                                    <div class="singledetailInfo"><span class="listTitle">Booking Info</span>{item.info}</div>
-                                    <div class="singledetailInfo"><span class="listTitle">Client Name</span>{item.client}</div>
-                                    <div class="singledetailInfo"><span class="listTitle">Contact</span>{item.contact}</div>
-                                    <div class="singledetailInfo"><span class="listTitle">Price</span>{item.price}</div>
-                                  </div>
-
-                                  {item.tag1 === 'one' && (
-                                    <div class="bookingAction">
-                                      <div class="d-flex align-items-center justify-content-start flex-wrap gap-3">
-                                        <a href="#" class="btn btn-sm btn-light-danger fw-medium rounded-pill"><i class="bi bi-x me-1"></i>Reject</a>
-                                        <a href="#" class="btn btn-sm btn-light-success fw-medium rounded-pill"><i class="bi bi-check2-circle me-1"></i>Approve</a>
-                                        <a href="#" class="btn btn-sm btn-secondary fw-medium rounded-pill" data-bs-toggle="modal" data-bs-target="#messageModal"><i class="bi bi-envelope-dash me-1"></i>Send Message</a>
-                                      </div>
-                                    </div>
-                                  )}
-                                  {item.tag1 === 'two' && (
-                                    <div class="bookingAction">
-                                      <div class="d-flex align-items-center justify-content-start flex-wrap gap-3">
-                                        <a href="#" class="btn btn-sm btn-secondary fw-medium rounded-pill" data-bs-toggle="modal" data-bs-target="#messageModal"><i class="bi bi-envelope-dash me-1"></i>Send Message</a>
-                                      </div>
-                                    </div>
-                                  )}
-                                  {item.tag1 === 'four' && (
-                                    <div class="bookingAction">
-                                      <div class="d-flex align-items-center justify-content-start flex-wrap gap-3">
-                                        <a href="#" class="btn btn-sm btn-light-success fw-medium rounded-pill"><i class="bi bi-send-check me-1"></i>Pay Now</a>
-                                        <a href="#" class="btn btn-sm btn-secondary fw-medium rounded-pill" data-bs-toggle="modal" data-bs-target="#messageModal"><i class="bi bi-envelope-dash me-1"></i>Send Message</a>
-                                      </div>
-                                    </div>
-                                  )}
-
                                 </div>
                               </div>
-                            </div>
-                          </li>
-                        ))}
-
-                      </ul>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -22,6 +22,23 @@ const heroImg = event.img || '/assets/img/single-4.jpg';
 // Similar listings — pull 4 most recent published ones excluding this one.
 const similar = (await getPublishedListings(Astro.locals.supabase, { limit: 4 })).filter((l) => l.id !== event.id);
 const listings2 = similar;
+
+// Reviews for this listing.
+const { data: reviewRows } = Astro.locals.supabase
+  ? await Astro.locals.supabase
+      .from('reviews')
+      .select('id, rating, body, created_at, profiles:user_id(id, full_name, avatar_url)')
+      .eq('listing_id', event.id)
+      .order('created_at', { ascending: false })
+  : { data: [] };
+const reviewsList = (reviewRows ?? []).map((r: any) => ({
+  id: r.id,
+  name: r.profiles?.full_name || 'Anonymous',
+  avatar: r.profiles?.avatar_url || '/assets/img/team-6.jpg',
+  rating: r.rating,
+  body: r.body,
+  date: r.created_at ? new Date(r.created_at).toLocaleDateString() : '',
+}));
 ---
 <Base title="Single Listing - ThinksToDo">
   <Navbar headerClass="header header-light" />
@@ -189,127 +206,69 @@ const listings2 = similar;
 						<div id="review" class="panel-collapse collapse show">
 							<div class="card-body p-4 pt-2">
 								<div class="allreviewsWrapper">
-									<div class="reviewsTitle d-flex flex-column mb-3"><h5>03 Reviews</h5></div>
+									<div class="reviewsTitle d-flex flex-column mb-3"><h5>{reviewsList.length === 0 ? 'No reviews yet' : `${reviewsList.length} Review${reviewsList.length === 1 ? '' : 's'}`}</h5></div>
 									<div class="allreviewsLists mb-4">
-
-										<!-- Components/Listings/Single-Listings/single-listing-01/reviews2.html -->
-										<!-- Single Reviews -->
-										<div class="singlereviews">
-										    <div class="d-flex align-items-start justify-content-between flex-sm-wrap flex-wrap gap-3">
-										        <div class="reviewerThumb">
-										            <div class="square--60 circle overflow-hidden"><img src="/assets/img/team-6.jpg" class="img-fluid circle" alt="Reviewer Thumb"></div>
-										        </div>
-										        <div class="reviewerMessage">
-										            <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
-										                <div class="reviewerInfo">
-										                    <h6 class="mb-0">Claire H. Jeter</h6>
-										                    <p class="text-md mb-0">Posted on 26 Fab 2025</p>
-										                </div>
-										                <div class="reviewsFlexlast">
-										                    <div class="d-flex align-items-center justify-content-start gap-1">
-										                        <span><i class="fa-solid fa-star text-sm text-warning active"></i></span>
-										                        <span><i class="fa-solid fa-star text-sm text-warning active"></i></span>
-										                        <span><i class="fa-solid fa-star text-sm text-warning active"></i></span>
-										                        <span><i class="fa-solid fa-star text-sm text-warning active"></i></span>
-										                        <span><i class="fa-solid fa-star text-sm text-warning active"></i></span>
-										                    </div>
-										                </div>
-										            </div>
-										            <div class="messageDescription">
-										                <p>Usually, we prefer the real thing, wine without sulfur based preservatives, real butter, not margarine, and so we'd like our layouts and designs to be.</p>
-										            </div>
-										        </div>
-										    </div>
-										    <div class="replyReviews">
-										        <div class="d-flex align-items-start justify-content-between flex-sm-wrap flex-wrap gap-3">
-										            <div class="reviewerThumb">
-										                <div class="square--60 circle overflow-hidden"><img src="/assets/img/team-4.jpg" class="img-fluid circle" alt="Reviewer Thumb"></div>
-										            </div>
-										            <div class="reviewerMessage">
-										                <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
-										                    <div class="reviewerInfo">
-										                        <h6 class="mb-0">Jack M Kerry</h6>
-										                        <p class="text-md mb-0">Posted on 26 Fab 2025</p>
-										                    </div>
-										                </div>
-										                <div class="messageDescription">
-										                    <p>Usually, we prefer the real thing, wine without sulfur based preservatives, real butter, not margarine, and so we'd like our layouts and designs to be.</p>
-										                </div>
-										            </div>
-										        </div>
-										    </div>
-										</div>
-
-										<!-- Single Reviews -->
-										<div class="singlereviews d-flex align-items-start justify-content-between flex-sm-wrap flex-wrap gap-3">
-										    <div class="reviewerThumb">
-										        <div class="square--60 circle overflow-hidden"><img src="/assets/img/team-7.jpg" class="img-fluid circle" alt="Reviewer Thumb"></div>
-										    </div>
-										    <div class="reviewerMessage">
-										        <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
-										            <div class="reviewerInfo">
-										                <h6 class="mb-0">Carl M. Gibson</h6>
-										                <p class="text-md mb-0">Posted on 28 Fab 2025</p>
-										            </div>
-										            <div class="reviewsFlexlast">
-										                <div class="d-flex align-items-center justify-content-start gap-1">
-										                    <span><i class="fa-solid fa-star text-sm text-warning active"></i></span>
-										                    <span><i class="fa-solid fa-star text-sm text-warning active"></i></span>
-										                    <span><i class="fa-solid fa-star text-sm text-warning active"></i></span>
-										                    <span><i class="fa-solid fa-star text-sm text-warning active"></i></span>
-										                    <span><i class="fa-solid fa-star text-sm text-muted disabled"></i></span>
-										                </div>
-										            </div>
-										        </div>
-										        <div class="messageDescription">
-										            <p>Usually, we prefer the real thing, wine without sulfur based preservatives, real butter, not margarine, and so we'd like our layouts.</p>
-										        </div>
-										    </div>
-										</div>
-
+										{reviewsList.map((r) => (
+											<div class="singlereviews d-flex align-items-start justify-content-between flex-sm-wrap flex-wrap gap-3 mb-3">
+												<div class="reviewerThumb">
+													<div class="square--60 circle overflow-hidden"><img src={r.avatar} class="img-fluid circle" alt={r.name} /></div>
+												</div>
+												<div class="reviewerMessage">
+													<div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+														<div class="reviewerInfo">
+															<h6 class="mb-0">{r.name}</h6>
+															<p class="text-md mb-0">Posted on {r.date}</p>
+														</div>
+														<div class="reviewsFlexlast">
+															<div class="d-flex align-items-center justify-content-start gap-1">
+																{Array.from({ length: 5 }).map((_, i) => (
+																	<span><i class={`fa-solid fa-star text-sm ${i < r.rating ? 'text-warning active' : 'text-muted disabled'}`}></i></span>
+																))}
+															</div>
+														</div>
+													</div>
+													<div class="messageDescription">
+														<p>{r.body}</p>
+													</div>
+												</div>
+											</div>
+										))}
 									</div>
 
-									<!-- Extra Content -->
+									<!-- Review form -->
 									<div class="reviewssubmition">
-										<div class="formRow">
-
-											<!-- Components/Listings/Single-Listings/single-listing-01/extra.html -->
-											<div class="row align-items-start gx-xl-3 gx-lg-3">
-											    <div class="col-xl-6 col-lg-6 col-md-12">
-											        <div class="form-group">
-											            <input type="email" class="form-control border" placeholder="your@example.com">
-											        </div>
-											    </div>
-											    <div class="col-xl-6 col-lg-6 col-md-12">
-											        <div class="form-group">
-											            <div class="position-relative">
-											                <select class="select form-control border">
-											                  <option value="">Select Rating</option>
-											                  <option value="verypoor">1 Star - Very Poor</option>
-											                  <option value="poor">2 Star - Poor</option>
-											                  <option value="mid">3 Star - Medium</option>
-											                  <option value="good">4 Star - Very Good</option>
-											                  <option value="verygood">5 Star - Excellent</option>
-											                </select>
-											            </div>
-											        </div>
-											    </div>
-											    <div class="col-xl-12 col-lg-12 col-md-12">
-											        <div class="form-group">
-											            <input type="text" class="form-control border" placeholder="Review title">
-											        </div>
-											    </div>
-											    <div class="col-xl-12 col-lg-12 col-md-12">
-											        <div class="form-group">
-											            <textarea class="form-control border" placeholder="Leave Review Message" style="height: 120px"></textarea>
-											        </div>
-											    </div>
-											    <div class="col-xl-12 col-lg-12 col-md-12">
-											        <button type="button" class="btn btn-primary fw-medium px-5">Submit Review</button>
-											    </div>
+										{Astro.locals.user ? (
+											<form action="/api/reviews" method="post" class="formRow">
+												<input type="hidden" name="listing_id" value={event.id} />
+												<div class="row align-items-start gx-xl-3 gx-lg-3">
+													<div class="col-md-6">
+														<div class="form-group">
+															<label class="form-label">Rating</label>
+															<select name="rating" required class="select form-control border">
+																<option value="">Select Rating</option>
+																<option value="1">1 Star - Very Poor</option>
+																<option value="2">2 Star - Poor</option>
+																<option value="3">3 Star - Medium</option>
+																<option value="4">4 Star - Very Good</option>
+																<option value="5" selected>5 Star - Excellent</option>
+															</select>
+														</div>
+													</div>
+													<div class="col-12">
+														<div class="form-group">
+															<textarea name="body" required minlength="10" class="form-control border" placeholder="Share your experience…" style="height: 120px"></textarea>
+														</div>
+													</div>
+													<div class="col-12">
+														<button type="submit" class="btn btn-primary fw-medium px-5">Submit Review</button>
+													</div>
+												</div>
+											</form>
+										) : (
+											<div class="alert alert-light border">
+												<a href={`/login/?next=${encodeURIComponent(`/listing/${event.slug}/`)}`} class="text-primary fw-medium">Sign in</a> to leave a review.
 											</div>
-
-										</div>
+										)}
 									</div>
 
 								</div>
@@ -487,7 +446,7 @@ const listings2 = similar;
 										</div>
 									</div>
 									<div class="form-group">
-										<a href="/booking-page/" class="btn btn-primary rounded-pill fw-medium w-100">Booking Request</a>
+										<a href={`/booking-page/?slug=${event.slug}`} class="btn btn-primary rounded-pill fw-medium w-100">Booking Request</a>
 									</div>
 								</div>
 							</div>

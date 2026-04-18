@@ -6,6 +6,23 @@ import Subscribe from '../components/shared/Subscribe.astro';
 import LoginModal from '../components/shared/LoginModal.astro';
 import SearchOffcanvas from '../components/shared/SearchOffcanvas.astro';
 import Preloader from '../components/shared/Preloader.astro';
+
+export const prerender = false;
+
+const supabase = Astro.locals.supabase;
+const user = Astro.locals.user;
+const bookingId = Astro.url.searchParams.get('booking');
+
+let booking: any = null;
+if (supabase && user && bookingId) {
+  const { data } = await supabase
+    .from('bookings')
+    .select('id, start_date, end_date, guests, status, created_at, listings(title, slug)')
+    .eq('id', bookingId)
+    .eq('user_id', user.id)
+    .maybeSingle();
+  booking = data;
+}
 ---
 <Base title="Payment Successful - ThinksToDo">
   <Navbar headerClass="header header-light head-shadow" />
@@ -32,32 +49,42 @@ import Preloader from '../components/shared/Preloader.astro';
 								</div>
 
 								<div class="confirmsHeads">
-									<h3 class="successTitle">Congratulations!</h3>
-									<p class="successSubtitle">Your order has been received successfully. </p>
+									<h3 class="successTitle">Booking Received!</h3>
+									<p class="successSubtitle">{booking?.listings?.title
+										? `We've sent your request to ${booking.listings.title}. The host will confirm shortly.`
+										: 'Your booking request has been received.'}</p>
 								</div>
 
-								<!-- OrderInfo Start -->
-								<div class="confirmsInfo">
-									<ul>
-										<li>
-											<span class="headTitle">Order ID</span>
-											<span class="headCaps">54231</span>
-										</li>
-										<li>
-											<span class="headTitle">Payment Status</span>
-											<span class="headCaps"><i class="bi bi-check-circle-fill text-success me-1"></i>Compeleted</span>
-										</li>
-										<li>
-											<span class="headTitle">Payment Date</span>
-											<span class="headCaps">Jul 17 2025, 10:40:25</span>
-										</li>
-										<li>
-											<span class="headTitle">Total Amount</span>
-											<span class="headCaps">$276.85</span>
-										</li>
-									</ul>
-								</div>
-								<!-- OrderInfo END -->
+								{booking ? (
+									<div class="confirmsInfo">
+										<ul>
+											<li>
+												<span class="headTitle">Booking ID</span>
+												<span class="headCaps">{booking.id.slice(0, 8)}…</span>
+											</li>
+											<li>
+												<span class="headTitle">Status</span>
+												<span class="headCaps"><i class="bi bi-clock-history text-warning me-1"></i>{booking.status}</span>
+											</li>
+											<li>
+												<span class="headTitle">Date</span>
+												<span class="headCaps">{booking.start_date ?? '—'}</span>
+											</li>
+											<li>
+												<span class="headTitle">Guests</span>
+												<span class="headCaps">{booking.guests}</span>
+											</li>
+										</ul>
+										<div class="d-flex gap-2 mt-3 justify-content-center flex-wrap">
+											{booking.listings?.slug && <a href={`/listing/${booking.listings.slug}/`} class="btn btn-light rounded-pill btn-sm">View Listing</a>}
+											<a href="/dashboard-my-bookings/" class="btn btn-primary rounded-pill btn-sm">My Bookings</a>
+										</div>
+									</div>
+								) : (
+									<div class="text-center mt-4">
+										<a href="/listings/" class="btn btn-primary rounded-pill">Browse Listings</a>
+									</div>
+								)}
 
 							</div>
 
